@@ -5,7 +5,7 @@ class Cat():
     scrollMargin = 200
 
     def __init__(self, width, height):
-        self.image = 'catsprite.png'
+        # self.image = 'catsprite.png'
         self.cx = width/2
         self.cy = height/2
         self.screenWidth = width 
@@ -17,12 +17,13 @@ class Cat():
         self.toggleMoveUp = True
     
     def appStarted(self, app):
-        app.catImage = app.loadImage(self.image)
+        # app.catImage = app.loadImage(self.image)
         spritestrip = app.loadImage('allcatsprites.png')
         app.stillSprites = []
         for i in range(4):
             sprite = spritestrip.crop((64*i, 0, (64*i)+64, 64))
             app.stillSprites.append(sprite)
+        app.catImage = app.stillSprites[0]
     
     def makeCatVisible(self, app):
         if (self.cx < (self.scrollX + self.scrollMargin)):
