@@ -13,6 +13,12 @@ def appStarted(app):
 def keyPressed(app, event):
     mainCat.keyPressed(app, event)
 
+def keyReleased(app, event):
+    mainCat.keyReleased(app, event)
+
+def timerFired(app):
+    mainCat.timerFired(app)
+
 def redrawAll(app, canvas):
     bg1.redrawAll(app, canvas)
     mainCat.redrawAll(app, canvas)

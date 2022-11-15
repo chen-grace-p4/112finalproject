@@ -24,6 +24,7 @@ class Background():
         else:
             self.cat.toggleMoveRight = True
 
+        # a little bit off for some reason
         if x0 < 0:
             x0 = 0
             x1 = 600
