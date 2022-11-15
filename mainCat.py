@@ -18,7 +18,7 @@ class Cat():
     
     def appStarted(self, app):
         app.catImage = app.loadImage(self.image)
-        spritestrip = app.loadImage('stillcatspritesheet.png')
+        spritestrip = app.loadImage('allcatsprites.png')
         app.stillSprites = []
         for i in range(4):
             sprite = spritestrip.crop((64*i, 0, (64*i)+64, 64))

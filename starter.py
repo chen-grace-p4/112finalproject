@@ -2,6 +2,7 @@ from cmu_112_graphics import *
 from mainCat import *
 from map import *
 
+# note: all art (sprites, bg, etc.) made by me!
 mainCat = Cat(600, 600)
 bg1 = Background('bluemap1.png', 600, 600, mainCat)
 
