@@ -73,7 +73,13 @@ class Background():
         canvas.create_image(self.screenWidth/2, self.screenHeight/2, 
         image=ImageTk.PhotoImage(cropped))
 
-# manages collision with walls
-class Wall():
+# manages collision and interaction with objects 
+class Object():
+    def __init__(self):
+        pass
+
+# manages collision with walls (inherit from object)
+# attack walls to the map
+class Wall(Object):
     def appStarted(app):
         pass 
