@@ -78,6 +78,7 @@ class Cat():
         self.makeCatVisible(app)
 
     def keyPressed(self, app, event):
+        # "x" makes cat run?
         if (self.toggleMoveLeft and event.key == "Left"):
             self.moveCat(app, -10, 0)
             app.catImage = app.stillSprites[1]
