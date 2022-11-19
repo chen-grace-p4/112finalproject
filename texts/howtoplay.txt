@@ -1,0 +1,4 @@
+Use arrow keys to move around. 
+Press 'Z' to interact with something.
+Press 'X' to speed up text.
+Press 'C' to open inventory.
