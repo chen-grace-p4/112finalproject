@@ -62,3 +62,5 @@ class TextBox():
         pass
 
 # make class that stores list of TextBoxes for every scene
+# make class for "static UI" the user can't interact with (HP)
+# inventory
