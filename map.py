@@ -78,8 +78,13 @@ class Object():
     def __init__(self):
         pass
 
+# object that you can interact with and does something
+class InteractObj(Object):
+    def __init__(self):
+        pass
+    
 # manages collision with walls (inherit from object)
-# attack walls to the map
+# attach walls to the map
 class Wall(Object):
     def appStarted(app):
         pass 

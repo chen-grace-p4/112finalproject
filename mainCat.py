@@ -16,6 +16,8 @@ class Cat():
         self.toggleMoveLeft = True 
         self.toggleMoveDown = True 
         self.toggleMoveUp = True
+
+        self.timePassed = 0
     
     def appStarted(self, app):
         # app.catImage = app.loadImage(self.image)
@@ -52,7 +54,8 @@ class Cat():
         app.catImage = app.stillSprites[0]
         
         app.spriteCounter = 0
-        app.timerDelay = 500
+        app.timerDelay = 0
+        # app.timePassed = 0
 
         # IS cat moving that direction
         app.catIsMovingRight = False
@@ -105,9 +108,14 @@ class Cat():
             app.catIsMovingUp = False
 
     def timerFired(self, app):
-        if (self.toggleMoveLeft and self.toggleMoveRight and self.toggleMoveUp
-            and self.toggleMoveDown):
-            app.spriteCounter = (1 + app.spriteCounter) % 2
+        self.timePassed += 1
+        # print(app.timePassed)
+        if self.timePassed == 25:
+            if (self.toggleMoveLeft and self.toggleMoveRight and self.toggleMoveUp
+                and self.toggleMoveDown):
+                app.spriteCounter = (1 + app.spriteCounter) % 2
+        elif self.timePassed > 25:
+            self.timePassed = 0
         # pass
 
     def redrawAll(self, app, canvas):
