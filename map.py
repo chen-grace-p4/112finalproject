@@ -187,7 +187,7 @@ class InteractObj(Object):
 
     @staticmethod
     def redDoorFunc(app):
-        app.scene1Text.startText = True
+        app.scene12Text.startText = True
         app.textOnScreen = True
 
     def keyPressed(self, app, event):

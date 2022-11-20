@@ -42,6 +42,8 @@ class Button():
             image=ImageTk.PhotoImage(self.buttonImage))
 
 class TextBox():
+    # make screen shift so that char is in middle when text
+    # is on
     def __init__(self, textFile, x0, y0, x1, y1, toggleDelay):
         self.fileName = textFile
         self.textList = []
@@ -97,7 +99,7 @@ class TextBox():
 
     @staticmethod
     def triggerFuncs(self, app):
-        if self.fileName == 'texts/scene1.txt':
+        if self.fileName == 'texts/scene1.2.txt':
             app.mode = 'gameMode2'
 
     def keyPressed(self, app, event):
@@ -105,6 +107,7 @@ class TextBox():
             if self.displayedIndex >= len(self.textList):
                 self.allEnd = True
                 app.textOnScreen = False
+                app.textOnScreen2 = False
                 self.triggerFuncs(self, app)
             else:
                 self.textEnded = False 
