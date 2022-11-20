@@ -101,6 +101,8 @@ def gameMode_appStarted(app):
     app.scene1Text.appStarted(app) # appstarted doens't do anything yet
     app.textOnScreen = True #Default is False, only True when textbox displayed
 
+    app.testObject = Object(200, 200, 250, 250, mainCat)
+
 def gameMode_keyPressed(app, event):
     if not app.textOnScreen: mainCat.keyPressed(app, event)
     app.scene1Text.keyPressed(app, event)
@@ -116,7 +118,9 @@ def gameMode_redrawAll(app, canvas):
     bg1.redrawAll(app, canvas)
     mainCat.redrawAll(app, canvas)
     app.scene1Text.redrawAll(app, canvas)
+    app.testObject.redrawAll(app, canvas)
     # when cat reaches red door, change app.scene1Text.startText = True
+    # and textonscreen = true
 ###########################################
 def main():
     print("Running game!")

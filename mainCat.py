@@ -2,7 +2,7 @@ from cmu_112_graphics import *
 class Cat():
     scrollX = 0
     scrollY = 0
-    scrollMargin = 200
+    scrollMargin = 100
 
     def __init__(self, width, height):
         # self.image = 'catsprite.png'
