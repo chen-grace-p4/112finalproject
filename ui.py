@@ -60,7 +60,7 @@ class TextBox():
         self.timePassed = 0
         self.textEnded = False
         self.allEnd = False
-        self.startText = True #Default is False, DEBUG makes it True
+        self.startText = False #Default is False, DEBUG makes it True
 
         # when text is showing, make cat unable to move
         # print("made textbox!")
@@ -95,11 +95,17 @@ class TextBox():
             elif self.timePassed > 2:
                 self.timePassed = 0
 
+    @staticmethod
+    def triggerFuncs(self, app):
+        if self.fileName == 'texts/scene1.txt':
+            app.mode = 'gameMode2'
+
     def keyPressed(self, app, event):
         if self.startText and self.textEnded and event.key == 'z':
             if self.displayedIndex >= len(self.textList):
                 self.allEnd = True
                 app.textOnScreen = False
+                self.triggerFuncs(self, app)
             else:
                 self.textEnded = False 
                 self.displayedText = []

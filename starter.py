@@ -94,18 +94,36 @@ def howToScreenMode_redrawAll(app, canvas):
                             text=f"{app.mouseX}, {app.mouseY}")
     # app.howToText.redrawAll(app, canvas)
 ###########################################
+bg1Walls = [(0, 0, 330, 440),
+            (300, 0, 480, 100),
+            (480, 0, 1020, 440),
+            (1020, 440, 1200, 570),
+            (0, 570, 1020, 780)]
 def gameMode_appStarted(app):
     mainCat.appStarted(app)
     bg1.appStarted(app)
     app.scene1Text = TextBox('texts/scene1.txt', 20, 400, 580, 580, True)
     app.scene1Text.appStarted(app) # appstarted doens't do anything yet
-    app.textOnScreen = True #Default is False, only True when textbox displayed
+    app.textOnScreen = False #Default is False, only True when textbox displayed
 
-    app.testObject = Object(200, 200, 250, 250, mainCat)
+    app.testDoor = InteractObj('redDoorObj.png',900, 480, 940, 530, mainCat, bg1.bgImage.height)
+
+    app.bg1WallObj = []
+    createWalls(bg1Walls, app, mainCat, bg1, app.bg1WallObj)
+
+def createWalls(wallList, app, cat, bg, newList):
+    for tup in wallList:
+        x0 = tup[0]
+        y0 = tup[1]
+        x1 = tup[2]
+        y1 = tup[3]
+        obj = Object(x0, y0, x1, y1, cat, bg.bgImage.height)
+        newList.append(obj)
 
 def gameMode_keyPressed(app, event):
     if not app.textOnScreen: mainCat.keyPressed(app, event)
     app.scene1Text.keyPressed(app, event)
+    app.testDoor.keyPressed(app, event)
 
 def gameMode_keyReleased(app, event):
     if not app.textOnScreen: mainCat.keyReleased(app, event)
@@ -117,10 +135,11 @@ def gameMode_timerFired(app):
 def gameMode_redrawAll(app, canvas):
     bg1.redrawAll(app, canvas)
     mainCat.redrawAll(app, canvas)
+    app.testDoor.redrawAll(app, canvas)
     app.scene1Text.redrawAll(app, canvas)
-    app.testObject.redrawAll(app, canvas)
-    # when cat reaches red door, change app.scene1Text.startText = True
-    # and textonscreen = true
+    for wall in app.bg1WallObj:
+        wall.redrawAll(app, canvas)
+    
 ###########################################
 def main():
     print("Running game!")
