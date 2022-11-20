@@ -154,12 +154,13 @@ class Object():
 # object that you can interact with and does something
 # has image attached to it
 class InteractObj(Object):
-    def __init__(self):
-        pass
+    def __init__(self, image, x0, y0, x1, y1, cat):
+        super().__init__(self, x0, y0, x1, y1, cat)
+        
 
 # manages collision with walls (inherit from object)
 # attach walls to the map
 # invisible
 class Wall(Object):
-    def appStarted(app):
+    def appStarted(self, x0, y0, x1, y1, cat):
         pass 
