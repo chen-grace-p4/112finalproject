@@ -34,6 +34,8 @@ def appStarted(app):
     gameMode_appStarted(app)
     howToScreenMode_appStarted(app)
 
+    gameMode2_appStarted(app)
+
 def startScreenMode_appStarted(app): #startScreenMode
     app.background = app.loadImage('images/startScreen.png')
     
@@ -139,6 +141,54 @@ def gameMode_redrawAll(app, canvas):
     app.scene1Text.redrawAll(app, canvas)
     for wall in app.bg1WallObj:
         wall.redrawAll(app, canvas)
+    
+###########################################
+###########################################
+bg2Walls = [()]
+mainCat2 = Cat(600, 600)
+bg2 = Background('images/redmap1.png', 600, 600, mainCat2)
+def gameMode2_appStarted(app):
+    mainCat2.appStarted(app)
+    bg2.appStarted(app)
+    # app.scene1Text = TextBox('texts/scene1.txt', 20, 400, 580, 580, True)
+    # app.scene1Text.appStarted(app) # appstarted doens't do anything yet
+    app.textOnScreen2 = False #Default is False, only True when textbox displayed
+
+    # app.testDoor = InteractObj('redDoorObj.png',900, 480, 940, 530, mainCat, bg1.bgImage.height)
+
+    # app.bg2WallObj = []
+    # createWalls(bg1Walls, app, mainCat, bg2, app.bg2WallObj)
+
+def createWalls(wallList, app, cat, bg, newList):
+    for tup in wallList:
+        x0 = tup[0]
+        y0 = tup[1]
+        x1 = tup[2]
+        y1 = tup[3]
+        obj = Object(x0, y0, x1, y1, cat, bg.bgImage.height)
+        newList.append(obj)
+
+def gameMode2_keyPressed(app, event):
+    print("keypressed")
+    print(f"{app.textOnScreen}")
+    if not app.textOnScreen2: mainCat2.keyPressed(app, event)
+    # app.scene1Text.keyPressed(app, event)
+    # app.testDoor.keyPressed(app, event)
+
+def gameMode2_keyReleased(app, event):
+    if not app.textOnScreen2: mainCat2.keyReleased(app, event)
+
+def gameMode2_timerFired(app):
+    mainCat2.timerFired(app)
+    # app.scene1Text.timerFired(app)
+
+def gameMode2_redrawAll(app, canvas):
+    bg2.redrawAll(app, canvas)
+    mainCat2.redrawAll(app, canvas)
+    # app.testDoor.redrawAll(app, canvas)
+    # app.scene1Text.redrawAll(app, canvas)
+    # for wall in app.bg1WallObj:
+    #     wall.redrawAll(app, canvas)
     
 ###########################################
 def main():
