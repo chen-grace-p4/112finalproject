@@ -144,7 +144,17 @@ def gameMode_redrawAll(app, canvas):
     
 ###########################################
 ###########################################
-bg2Walls = [()]
+bg2Walls = [(0, 0, 680, 500),
+            (690, 0, 1080, 150),
+            (1080, 0, 1780, 260),
+            (1560, 260, 1800, 710),
+            (1760, 710, 1800, 1045),
+            (1490, 1045, 1800, 1250),
+            (1100, 350, 1480, 1180),
+            (990, 490, 1100, 1180),
+            (480, 500, 850, 890),
+            (0, 500, 350, 890),
+            (0, 1040, 980, 1240)]
 mainCat2 = Cat(600, 600)
 bg2 = Background('images/redmap1.png', 600, 600, mainCat2)
 def gameMode2_appStarted(app):
@@ -156,8 +166,8 @@ def gameMode2_appStarted(app):
 
     # app.testDoor = InteractObj('redDoorObj.png',900, 480, 940, 530, mainCat, bg1.bgImage.height)
 
-    # app.bg2WallObj = []
-    # createWalls(bg1Walls, app, mainCat, bg2, app.bg2WallObj)
+    app.bg2WallObj = []
+    createWalls(bg2Walls, app, mainCat2, bg2, app.bg2WallObj)
 
 def createWalls(wallList, app, cat, bg, newList):
     for tup in wallList:
@@ -169,8 +179,6 @@ def createWalls(wallList, app, cat, bg, newList):
         newList.append(obj)
 
 def gameMode2_keyPressed(app, event):
-    print("keypressed")
-    print(f"{app.textOnScreen}")
     if not app.textOnScreen2: mainCat2.keyPressed(app, event)
     # app.scene1Text.keyPressed(app, event)
     # app.testDoor.keyPressed(app, event)
@@ -187,8 +195,8 @@ def gameMode2_redrawAll(app, canvas):
     mainCat2.redrawAll(app, canvas)
     # app.testDoor.redrawAll(app, canvas)
     # app.scene1Text.redrawAll(app, canvas)
-    # for wall in app.bg1WallObj:
-    #     wall.redrawAll(app, canvas)
+    for wall in app.bg2WallObj:
+        wall.redrawAll(app, canvas)
     
 ###########################################
 def main():
