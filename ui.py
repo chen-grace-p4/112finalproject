@@ -1,27 +1,16 @@
 from cmu_112_graphics import *
 from mainCat import *
 class Button():
-    def __init__(self, image, x, y, type):
+    def __init__(self, image, x, y, type, func):
         self.cx = x
         self.cy = y
         self.image = image 
         self.type = type
         self.buttonImage = image
+        self.funct = func
     
     def appStarted(self, app):
         self.buttonImage = app.loadImage(self.image)
-
-    @staticmethod
-    def startButtonFunc(app):
-        app.mode = 'gameMode'
-        app.prevMode = 'startScreenMode'
-    @staticmethod
-    def howToButtonFunc(app):
-        app.mode = 'howToScreenMode'
-        app.prevMode = 'startScreenMode'
-    @staticmethod
-    def backButtonFunc(app):
-        app.mode = app.prevMode
 
     def mousePressed(self, app, event):
         x0 = self.cx - (self.buttonImage.width/2)
@@ -30,12 +19,7 @@ class Button():
         y1 = self.cy + (self.buttonImage.height/2)
         if (event.x > x0 and event.x < x1 and 
             event.y > y0 and event.y < y1):
-            if self.type == 'startButton':
-                self.startButtonFunc(app)
-            elif self.type == 'howToButton':
-                self.howToButtonFunc(app)
-            elif self.type == 'backButton':
-                self.backButtonFunc(app)
+            self.funct(app)
         
     def redrawAll(self, app, canvas):
         canvas.create_image(self.cx, self.cy,   

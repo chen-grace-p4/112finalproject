@@ -172,28 +172,21 @@ class Object():
             # canvas.create_rectangle(x0, y0, x1, y1, fill='red')
             self.checkCollision()
 
-
-
 # object that you can interact with and does something
 # has image attached to it
 class InteractObj(Object):
-    def __init__(self, image, x0, y0, x1, y1, cat, bgHeight):
+    def __init__(self, image, x0, y0, x1, y1, cat, bgHeight, func):
         self.image = image
+        self.funct = func
         super().__init__(x0, y0, x1, y1, cat, bgHeight)
     
     def appStarted(self, app):
         # self.objImage = app.loadImage(self.image)
         pass
 
-    @staticmethod
-    def redDoorFunc(app):
-        app.scene12Text.startText = True
-        app.textOnScreen = True
-
     def keyPressed(self, app, event):
         if (self.catTouchingObj and event.key == 'z'):
-            if self.image == 'redDoorObj.png':
-                self.redDoorFunc(app)
+            self.funct(app)
 
     def redrawAll(self, app, canvas):
         if (self.onScreen):

@@ -35,14 +35,27 @@ def appStarted(app):
     howToScreenMode_appStarted(app)
 
     gameMode2_appStarted(app)
+###############################################
+def startButtonFunc(app):
+    app.mode = 'gameMode'
+    app.prevMode = 'startScreenMode'
+
+def howToButtonFunc(app):
+    app.mode = 'howToScreenMode'
+    app.prevMode = 'startScreenMode'
+
+def backButtonFunc(app):
+    app.mode = app.prevMode
 
 def startScreenMode_appStarted(app): #startScreenMode
     app.background = app.loadImage('images/startScreen.png')
     
-    app.startButton = Button('images/startButton.png', 150, 300, 'startButton')
+    app.startButton = Button('images/startButton.png', 150, 300, 'startButton',
+                        startButtonFunc)
     app.startButton.appStarted(app)
     
-    app.howToButton = Button('images/howToButton.png', 150, 400, 'howToButton')
+    app.howToButton = Button('images/howToButton.png', 150, 400, 'howToButton',
+                        howToButtonFunc)
     app.howToButton.appStarted(app)
 
 def startScreenMode_mousePressed(app, event):
@@ -101,6 +114,11 @@ bg1Walls = [(0, 0, 330, 440),
             (480, 0, 1020, 440),
             (1020, 440, 1200, 570),
             (0, 570, 1020, 780)]
+
+def redDoorFunc(app):
+    app.scene12Text.startText = True
+    app.textOnScreen = True
+
 def gameMode_appStarted(app):
     mainCat.appStarted(app)
     bg1.appStarted(app)
@@ -110,7 +128,8 @@ def gameMode_appStarted(app):
     app.scene12Text = TextBox('texts/scene1.2.txt', 20, 400, 580, 580, True)
     app.textOnScreen = True #Default is False, only True when textbox displayed
 
-    app.testDoor = InteractObj('redDoorObj.png',900, 480, 940, 530, mainCat, bg1.bgImage.height)
+    app.testDoor = InteractObj('redDoorObj.png',900, 480, 940, 530, 
+                    mainCat, bg1.bgImage.height, redDoorFunc)
 
     app.bg1WallObj = []
     createWalls(bg1Walls, app, mainCat, bg1, app.bg1WallObj)
