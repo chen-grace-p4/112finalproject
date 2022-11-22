@@ -126,8 +126,10 @@ def createWalls(wallList, app, cat, bg, newList):
 
 def gameMode_keyPressed(app, event):
     if not app.textOnScreen: mainCat.keyPressed(app, event)
-    app.scene11Text.keyPressed(app, event)
-    app.scene12Text.keyPressed(app, event)
+    if app.scene11Text.startText:
+        app.scene11Text.keyPressed(app, event)
+    if app.scene12Text.startText:
+        app.scene12Text.keyPressed(app, event)
     app.testDoor.keyPressed(app, event)
 
 def gameMode_keyReleased(app, event):
@@ -135,15 +137,19 @@ def gameMode_keyReleased(app, event):
 
 def gameMode_timerFired(app):
     mainCat.timerFired(app)
-    app.scene11Text.timerFired(app)
-    app.scene12Text.timerFired(app)
+    if app.scene11Text.startText:
+        app.scene11Text.timerFired(app)
+    if app.scene12Text.startText:
+        app.scene12Text.timerFired(app)
 
 def gameMode_redrawAll(app, canvas):
     bg1.redrawAll(app, canvas)
     mainCat.redrawAll(app, canvas)
     app.testDoor.redrawAll(app, canvas)
-    app.scene11Text.redrawAll(app, canvas)
-    app.scene12Text.redrawAll(app, canvas)
+    if app.scene11Text.startText:
+        app.scene11Text.redrawAll(app, canvas)
+    if app.scene12Text.startText:
+        app.scene12Text.redrawAll(app, canvas)
     for wall in app.bg1WallObj:
         wall.redrawAll(app, canvas)
     
@@ -164,14 +170,14 @@ mainCat2 = Cat(600, 600)
 bg2 = Background('images/redmap1.png', 600, 600, mainCat2)
 def gameMode2_appStarted(app):
     app.inventory = []
-    
+
     mainCat2.appStarted(app)
     bg2.appStarted(app)
     app.scene21Text = TextBox('texts/scene2.1.txt', 20, 400, 580, 580, True)
     app.scene21Text.startText = True
     # app.scene1Text.appStarted(app) # appstarted doens't do anything yet
     app.textOnScreen2 = True #Default is False, only True when textbox displayed
-
+    print(f"appstarted textOnScreen2: {app.textOnScreen2}")
     # app.testDoor = InteractObj('redDoorObj.png',900, 480, 940, 530, mainCat, bg1.bgImage.height)
 
     app.bg2WallObj = []

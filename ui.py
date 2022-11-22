@@ -106,8 +106,11 @@ class TextBox():
         if self.startText and self.textEnded and event.key == 'z':
             if self.displayedIndex >= len(self.textList):
                 self.allEnd = True
-                app.textOnScreen = False
-                app.textOnScreen2 = False
+                self.startText = False
+                if(app.mode == "gameMode"):
+                    app.textOnScreen = False
+                if(app.mode == "gameMode2"):
+                    app.textOnScreen2 = False
                 self.triggerFuncs(self, app)
             else:
                 self.textEnded = False 

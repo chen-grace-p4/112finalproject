@@ -111,8 +111,8 @@ class Cat():
         self.timePassed += 1
         # print(app.timePassed)
         if self.timePassed == 25:
-            if (self.toggleMoveLeft and self.toggleMoveRight and self.toggleMoveUp
-                and self.toggleMoveDown):
+            if (self.toggleMoveLeft or self.toggleMoveRight or self.toggleMoveUp
+                or self.toggleMoveDown):
                 app.spriteCounter = (1 + app.spriteCounter) % 2
         elif self.timePassed > 25:
             self.timePassed = 0
