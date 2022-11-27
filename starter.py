@@ -1,11 +1,12 @@
 from cmu_112_graphics import *
 from mainCat import *
 from map import *
+from enemy import *
 from ui import *
 
+
 # note: all art (sprites, bg, etc.) made by me!
-mainCat = Cat(600, 600)
-bg1 = Background('images/bluemap1.png', 600, 600, mainCat)
+
 # make different backgrounds different modes
 # add ways to trigger changing of modes
 
@@ -23,9 +24,12 @@ bg1 = Background('images/bluemap1.png', 600, 600, mainCat)
 # def startButtonFunc(app):
 #     app.mode = 'gameMode'
 DEBUG = False
+mainCat = Cat(600, 600, 'images/bluemap1.png')
+bg1 = Background('images/bluemap1.png', 600, 600, mainCat)
 
 def appStarted(app):
-    app.mode = 'startScreenMode'
+    # app.mode = 'startScreenMode'
+    app.mode = 'gameMode21'
     app.prevMode = ''
     if DEBUG:
         app.mouseX = 0
@@ -35,6 +39,7 @@ def appStarted(app):
     howToScreenMode_appStarted(app)
 
     gameMode2_appStarted(app)
+    gameMode21_appStarted(app)
 ###############################################
 def startButtonFunc(app):
     app.mode = 'gameMode'
@@ -185,8 +190,11 @@ bg2Walls = [(0, 0, 680, 500),
             (480, 500, 850, 890),
             (0, 500, 350, 890),
             (0, 1040, 980, 1240)]
-mainCat2 = Cat(600, 600)
+mainCat2 = Cat(600, 600, 'images/redmap1.png')
 bg2 = Background('images/redmap1.png', 600, 600, mainCat2)
+def door2Func(app):
+    app.mode = 'gameMode21'
+
 def gameMode2_appStarted(app):
     app.inventory = []
 
@@ -196,8 +204,9 @@ def gameMode2_appStarted(app):
     app.scene21Text.startText = True
     # app.scene1Text.appStarted(app) # appstarted doens't do anything yet
     app.textOnScreen2 = True #Default is False, only True when textbox displayed
-    print(f"appstarted textOnScreen2: {app.textOnScreen2}")
-    # app.testDoor = InteractObj('redDoorObj.png',900, 480, 940, 530, mainCat, bg1.bgImage.height)
+    # print(f"appstarted textOnScreen2: {app.textOnScreen2}")
+    app.testDoor2 = InteractObj('images/redDoorObj.png',380, 720, 420, 760, 
+                            mainCat2, bg2.bgImage.height, door2Func)
 
     app.bg2WallObj = []
     createWalls(bg2Walls, app, mainCat2, bg2, app.bg2WallObj)
@@ -214,7 +223,7 @@ def createWalls(wallList, app, cat, bg, newList):
 def gameMode2_keyPressed(app, event):
     if not app.textOnScreen2: mainCat2.keyPressed(app, event)
     app.scene21Text.keyPressed(app, event)
-    # app.testDoor.keyPressed(app, event)
+    app.testDoor2.keyPressed(app, event)
 
 def gameMode2_keyReleased(app, event):
     if not app.textOnScreen2: mainCat2.keyReleased(app, event)
@@ -226,11 +235,64 @@ def gameMode2_timerFired(app):
 def gameMode2_redrawAll(app, canvas):
     bg2.redrawAll(app, canvas)
     mainCat2.redrawAll(app, canvas)
-    # app.testDoor.redrawAll(app, canvas)
+    app.testDoor2.redrawAll(app, canvas)
     app.scene21Text.redrawAll(app, canvas)
     for wall in app.bg2WallObj:
         wall.redrawAll(app, canvas)
+
+###########################################
+###########################################
+bg21Walls = []
+mainCat21 = Cat(600, 600, 'images/redmap12.png')
+bg21 = Background('images/redmap12.png', 600, 600, mainCat21)
+def door21Func(app):
+    app.mode = 'gameMode2'
     
+def gameMode21_appStarted(app):
+    app.inventory = []
+
+    mainCat21.appStarted(app)
+    bg21.appStarted(app)
+    # app.scene21Text = TextBox('texts/scene2.1.txt', 20, 400, 580, 580, True)
+    # app.scene21Text.startText = True
+    # app.scene1Text.appStarted(app) # appstarted doens't do anything yet
+    app.textOnScreen21 = False #Default is False, only True when textbox displayed
+    # print(f"appstarted textOnScreen2: {app.textOnScreen2}")
+    app.testDoor21 = InteractObj('images/redDoorObj.png',170, 850, 210, 940, 
+                            mainCat21, bg21.bgImage.height, door21Func)
+
+    app.graphRedMap21 = GraphCreator('redmap21', 19, 28)
+
+    # app.redmap21enemy1 = Enemy('tempredcatsprites.png', 384, 130, 448, 192, 
+    #                              mainCat21, bg21.bgImage.height, app.graphRedMap21)
+    app.redmap21enemy1 = Enemy('images/tempredcatsprites.png', 480, 898, 544, 960, 
+                                mainCat21, bg21.bgImage.height, app.graphRedMap21)
+    app.redmap21enemy1.appStarted(app)
+    # app.bg21WallObj = []
+    # createWalls(bg21Walls, app, mainCat21, bg21, app.bg21WallObj)
+
+def gameMode21_keyPressed(app, event):
+    if not app.textOnScreen21: mainCat21.keyPressed(app, event)
+    app.scene21Text.keyPressed(app, event)
+    app.testDoor21.keyPressed(app, event)
+
+def gameMode21_keyReleased(app, event):
+    if not app.textOnScreen21: mainCat21.keyReleased(app, event)
+
+def gameMode21_timerFired(app):
+    mainCat21.timerFired(app)
+    app.scene21Text.timerFired(app)
+    app.redmap21enemy1.timerFired(app)
+
+def gameMode21_redrawAll(app, canvas):
+    bg21.redrawAll(app, canvas)
+    mainCat21.redrawAll(app, canvas)
+    app.testDoor21.redrawAll(app, canvas)
+    app.redmap21enemy1.redrawAll(app, canvas)
+    # app.scene21Text.redrawAll(app, canvas)
+    # for wall in app.bg2WallObj:
+    #     wall.redrawAll(app, canvas)
+
 ###########################################
 def main():
     print("Running game!")

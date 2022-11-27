@@ -4,7 +4,8 @@ class Cat():
     scrollY = 0
     scrollMargin = 100
 
-    def __init__(self, width, height):
+    def __init__(self, width, height, bgImage):
+        self.bgImage = bgImage
         # self.image = 'catsprite.png'
         self.cx = width/2
         self.cy = height/2
@@ -20,6 +21,9 @@ class Cat():
         self.timePassed = 0
     
     def appStarted(self, app):
+        self.bg = app.loadImage(self.bgImage)
+        self.bgX = 300
+        self.bgY = self.bg.height - 300
         # app.catImage = app.loadImage(self.image)
         spritestrip = app.loadImage('images/allcatsprites.png')
         app.stillSprites = []
@@ -77,25 +81,27 @@ class Cat():
     
     def moveCat(self, app, dx, dy):
         self.cx += dx 
+        self.bgX += dx
         self.cy += dy
+        self.bgY += dy
         self.makeCatVisible(app)
 
     def keyPressed(self, app, event):
         # "x" makes cat run?
         if (self.toggleMoveLeft and event.key == "Left"):
-            self.moveCat(app, -10, 0)
+            self.moveCat(app, -15, 0)
             app.catImage = app.stillSprites[1]
             app.catIsMovingLeft = True
         elif (self.toggleMoveRight and event.key == "Right"):
-            self.moveCat(app, +10, 0)
+            self.moveCat(app, +15, 0)
             app.catImage = app.stillSprites[0]
             app.catIsMovingRight = True
         elif (self.toggleMoveUp and event.key == "Up"):
-            self.moveCat(app, 0, -10)
+            self.moveCat(app, 0, -15)
             app.catImage = app.stillSprites[3]
             app.catIsMovingUp = True
         elif (self.toggleMoveDown and event.key == "Down"):
-            self.moveCat(app, 0, +10)
+            self.moveCat(app, 0, +15)
             app.catImage = app.stillSprites[2]
             app.catIsMovingDown = True
     
@@ -117,6 +123,10 @@ class Cat():
         elif self.timePassed > 25:
             self.timePassed = 0
         # pass
+
+    def getCatLocation(self):
+        return (self.bgX, self.bgY)
+        # return (self.cx, self.cy)
 
     def redrawAll(self, app, canvas):
         x = self.cx
