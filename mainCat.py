@@ -2,7 +2,7 @@ from cmu_112_graphics import *
 class Cat():
     scrollX = 0
     scrollY = 0
-    scrollMargin = 100
+    scrollMargin = 150
 
     def __init__(self, width, height, bgImage):
         self.bgImage = bgImage

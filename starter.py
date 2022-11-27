@@ -242,7 +242,20 @@ def gameMode2_redrawAll(app, canvas):
 
 ###########################################
 ###########################################
-bg21Walls = []
+bg21Walls = [(0, 0, 126, 1215), (130, 0, 256, 320),
+            (256, 0, 1150, 128), (832, 128, 1150, 320),
+            (320, 320, 384, 384), (448, 288, 575, 449),
+            (576, 256, 704, 320), (255, 445, 575, 575),
+            (705, 445, 830, 895), (830, 450, 960, 705),
+            (125, 705, 580, 765), (320, 765, 575, 895),
+            (125, 1150, 320, 1215), (320, 1022, 960, 1215),
+            (960, 830, 1215, 1215), (1085, 705, 1215, 832),
+            (1215, 705, 1340, 895), (1344, 960, 1410, 1090),
+            (1220, 1152, 1472, 1215), (1470, 707, 1660, 1215),
+            (1535, 576, 1600, 640), (1084, 445, 1340, 576),
+            (1280, 248, 1342, 445), (1150, 0, 1790, 65),
+            (1280, 50, 1790, 256), (1664, 256, 1790, 1215),
+            (1470, 384, 1665, 510)]
 mainCat21 = Cat(600, 600, 'images/redmap12.png')
 bg21 = Background('images/redmap12.png', 600, 600, mainCat21)
 def door21Func(app):
@@ -253,23 +266,19 @@ def gameMode21_appStarted(app):
 
     mainCat21.appStarted(app)
     bg21.appStarted(app)
-    # app.scene21Text = TextBox('texts/scene2.1.txt', 20, 400, 580, 580, True)
-    # app.scene21Text.startText = True
-    # app.scene1Text.appStarted(app) # appstarted doens't do anything yet
     app.textOnScreen21 = False #Default is False, only True when textbox displayed
-    # print(f"appstarted textOnScreen2: {app.textOnScreen2}")
     app.testDoor21 = InteractObj('images/redDoorObj.png',170, 850, 210, 940, 
                             mainCat21, bg21.bgImage.height, door21Func)
 
     app.graphRedMap21 = GraphCreator('redmap21', 19, 28)
 
-    # app.redmap21enemy1 = Enemy('tempredcatsprites.png', 384, 130, 448, 192, 
-    #                              mainCat21, bg21.bgImage.height, app.graphRedMap21)
-    app.redmap21enemy1 = Enemy('images/tempredcatsprites.png', 480, 898, 544, 960, 
-                                mainCat21, bg21.bgImage.height, app.graphRedMap21)
+    app.redmap21enemy1 = Enemy('images/tempredcatsprites.png', 384, 130, 448, 192, 
+                                 mainCat21, bg21.bgImage.height, app.graphRedMap21)
+    # app.redmap21enemy1 = Enemy('images/tempredcatsprites.png', 480, 898, 544, 960, 
+                                # mainCat21, bg21.bgImage.height, app.graphRedMap21)
     app.redmap21enemy1.appStarted(app)
-    # app.bg21WallObj = []
-    # createWalls(bg21Walls, app, mainCat21, bg21, app.bg21WallObj)
+    app.bg21WallObj = []
+    createWalls(bg21Walls, app, mainCat21, bg21, app.bg21WallObj)
 
 def gameMode21_keyPressed(app, event):
     if not app.textOnScreen21: mainCat21.keyPressed(app, event)
@@ -290,8 +299,8 @@ def gameMode21_redrawAll(app, canvas):
     app.testDoor21.redrawAll(app, canvas)
     app.redmap21enemy1.redrawAll(app, canvas)
     # app.scene21Text.redrawAll(app, canvas)
-    # for wall in app.bg2WallObj:
-    #     wall.redrawAll(app, canvas)
+    for wall in app.bg21WallObj:
+        wall.redrawAll(app, canvas)
 
 ###########################################
 def main():

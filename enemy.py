@@ -105,11 +105,6 @@ class Enemy(Object):
         catX = catLoca[0]
         catY = catLoca[1]
         if abs(self.cx - catX) <= 250 and abs(self.cy - catY) <= 250:
-            # print("is going to cat")
-            # print(f"self.cx = {self.cx}")
-            # print(f"catX = {catX}")
-            # print(f"self.cy = {self.cy}")
-            # print(f"catY = {catY}")
             # cat is further horizontally than vertically
             if abs(self.cx - catX) > abs(self.cy - catY):
                 if self.cx < catX:
@@ -124,14 +119,8 @@ class Enemy(Object):
         return None
 
     def spawnDirection(self):
-        # print("is going to spawn")
         spawnY = self.spawnRow * 64
         spawnX = self.spawnCol * 64
-
-        # print(f"self.cx = {self.cx}")
-        # print(f"spawnX = {spawnX}")
-        # print(f"self.cy = {self.cy}")
-        # print(f"spawnY = {spawnY}")
 
         if abs(self.cx - spawnX) > abs(self.cy - spawnY):
             if self.cx < spawnX:
@@ -153,7 +142,6 @@ class Enemy(Object):
                     self.currentRow, self.currentCol)
 
     def findPath(self, app, path, visited, row, col):
-        # print(row, col)
         targetRow = 0
         targetCol = 0
         
@@ -168,22 +156,18 @@ class Enemy(Object):
             targetRow = self.spawnRow
             targetCol = self.spawnCol
             firstDir = self.spawnDirection()
-        # print(f"target:{targetRow}, {targetCol}")
-        # print(f"DIRECTION:{firstDir}")
+
         if (row, col) in visited:
-            # print(f"{(row,col)} is in visited")
             return None 
         
         visited.add((row, col))
         path.append((row,col))
 
         if (row, col) == (targetRow, targetCol):
-            # print("reached target!")
+            if self.catNearObj():
+                app.mode = 'battle'
             return path
-            # if cat in range:
-            # activate battle 
-            # else cat not in range:
-            # nothing
+        
         else:
             dirlist = []
             if firstDir == "south":
@@ -207,25 +191,28 @@ class Enemy(Object):
             return False
         if not (0<=(row+dir[0])<self.graph.rows and 0<=(col+dir[1])<self.graph.cols): 
             return False
-        # print(f'''row:{row+dir[0]}, col:{col+dir[1]}, 
-        #             result:{self.graph.graph2dList[row+dir[0]][col+dir[1]]}''')
         return self.graph.graph2dList[row+dir[0]][col+dir[1]]
 
+    def catNearObj(self):
+        return (abs(self.currCatX - self.cx) <= 64 and 
+                abs(self.currCatY - self.cy) <= 64)
+    
     def moveEnemyToNode(self, app, targRow, targCol):
-        if (targRow > self.currentRow):
-            self.y0 += 5
-            self.y1 += 5
-            self.bgY0 += 5
-        elif (targRow < self.currentRow):
-            self.y0 -= 5
-            self.y1 -= 5
-            self.bgY0 -= 5
-        elif (targCol > self.currentCol):
-            self.x0 += 5
-            self.x1 += 5
-        elif (targCol < self.currentCol):
-            self.x0 -= 5
-            self.x1 -= 5
+        if not self.catNearObj():
+            if (targRow > self.currentRow):
+                self.y0 += 5
+                self.y1 += 5
+                self.bgY0 += 5
+            elif (targRow < self.currentRow):
+                self.y0 -= 5
+                self.y1 -= 5
+                self.bgY0 -= 5
+            elif (targCol > self.currentCol):
+                self.x0 += 5
+                self.x1 += 5
+            elif (targCol < self.currentCol):
+                self.x0 -= 5
+                self.x1 -= 5
 
     @staticmethod
     # contains information for enemy1
@@ -233,7 +220,7 @@ class Enemy(Object):
         pass
 
     def keyPressed(self, app, event):
-        if (self.catTouchingObj and event.key == 'z'):
+        if (self.catNearObj() and event.key == 'z'):
             # activate textbox
             pass
 
