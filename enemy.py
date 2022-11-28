@@ -63,8 +63,25 @@ class GraphCreator():
 # maybe don't inherit from object and do collision by graph
 class Enemy(Object):
     # give it a spawning point on map
-    def __init__(self, image, x0, y0, x1, y1, cat, bgHeight, graph):
-        # crop image
+    def __init__(self, name, image, x0, y0, x1, y1, cat, bgHeight, graph):
+        self.healthLevel = 100
+        self.hostilityLevel = 4
+
+        self.name = name
+        self.showing = True
+        # player can choose to fight to lower health level or talk to 
+        # lower hostility level 
+        # when either hp or hostility reaches 0, the battle ends and 
+        # the playet gets a piece of a blue door
+
+        # if they fight, they will earn exp and level up themselves
+        # it will be easier to fight the boss battle and go home
+        # but they will leave thinking they shouldve never came and red sucks
+
+        # if they talk, they will earn no exp and have to fight longer,
+        # but at the end they will have become friends with the red cats
+
+
         self.image = image
         super().__init__(x0, y0, x1, y1, cat, bgHeight)
 
@@ -165,7 +182,8 @@ class Enemy(Object):
 
         if (row, col) == (targetRow, targetCol):
             if self.catNearObj():
-                app.mode = 'battle'
+                app.mode = 'battleMode'
+                app.enemyInBattle = self
             return path
         
         else:
@@ -220,50 +238,52 @@ class Enemy(Object):
         pass
 
     def keyPressed(self, app, event):
-        if (self.catNearObj() and event.key == 'z'):
-            # activate textbox
-            pass
+        if self.showing:
+            if (self.catNearObj() and event.key == 'z'):
+                # activate textbox
+                pass
 
     def timerFired(self, app):
-        self.timePassed += 1
-        # print(app.timePassed)
-        
-        if self.timePassed == 5:
-            catLoca = self.cat.getCatLocation()
-            catX = catLoca[0]
-            catY = catLoca[1]
-            self.currCatX = catX 
-            self.currCatY = catY
-        elif self.timePassed > 5:
-            self.timePassed = 0
-            self.prevCatX = self.currCatX
-            self.prevCatY = self.currCatY
+        if self.showing:
+            self.timePassed += 1
+            # print(app.timePassed)
+            
+            if self.timePassed == 5:
+                catLoca = self.cat.getCatLocation()
+                catX = catLoca[0]
+                catY = catLoca[1]
+                self.currCatX = catX 
+                self.currCatY = catY
+            elif self.timePassed > 5:
+                self.timePassed = 0
+                self.prevCatX = self.currCatX
+                self.prevCatY = self.currCatY
 
-        self.cx = self.x0 + 32
-        self.cy = self.bgY0 + 32
+            self.cx = self.x0 + 32
+            self.cy = self.bgY0 + 32
 
-        # print(self.cx, self.cy)
-        # catLoca = self.cat.getCatLocation()
-        # catX = catLoca[0]
-        # catY = catLoca[1]
-        # print(catX, catY)
-        currentGraphLoca = self.graph.getGraphLocation(self.cx, self.cy)
-        self.currentRow = currentGraphLoca[0]
-        self.currentCol = currentGraphLoca[1]
+            # print(self.cx, self.cy)
+            # catLoca = self.cat.getCatLocation()
+            # catX = catLoca[0]
+            # catY = catLoca[1]
+            # print(catX, catY)
+            currentGraphLoca = self.graph.getGraphLocation(self.cx, self.cy)
+            self.currentRow = currentGraphLoca[0]
+            self.currentCol = currentGraphLoca[1]
 
-        if self.prevCatX != self.currCatX or self.prevCatY != self.currCatY:
-            # print("cat moved!")
-            self.path = self.pathToCat(app)
-            # print(self.path)
+            if self.prevCatX != self.currCatX or self.prevCatY != self.currCatY:
+                # print("cat moved!")
+                self.path = self.pathToCat(app)
+                # print(self.path)
 
-        if len(self.path) > 0:
-            move = self.path[0]
-            self.moveEnemyToNode(app, move[0], move[1])
-            if self.currentRow == move[0] and self.currentCol == move[1]:
-                self.path.pop(0)
+            if len(self.path) > 0:
+                move = self.path[0]
+                self.moveEnemyToNode(app, move[0], move[1])
+                if self.currentRow == move[0] and self.currentCol == move[1]:
+                    self.path.pop(0)
 
     def redrawAll(self, app, canvas):
-        if (self.onScreen):
+        if (self.showing):
             cx = self.x0 + (self.objImage.width/2)
             cy = self.y0 + (self.objImage.height/2)
             cx -= self.cat.scrollX

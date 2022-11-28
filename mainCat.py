@@ -1,4 +1,5 @@
 from cmu_112_graphics import * 
+
 class Cat():
     scrollX = 0
     scrollY = 0
@@ -153,6 +154,18 @@ class Cat():
         else:
             canvas.create_image(x, y, 
             image=ImageTk.PhotoImage(app.catImage))
-    
 
+# add physics here?
+class battleCat():
+    def __init__(self):
+        self.cx = 300
+        self.cy = 300
+        self.image = 'images/battlecat.png'
+    
+    def appStarted(self, app):
+        self.sprite = app.loadImage(self.image)
+
+    def redrawAll(self, app, canvas):
+        canvas.create_image(self.cx, self.cy, 
+            image=ImageTk.PhotoImage(self.sprite))
 

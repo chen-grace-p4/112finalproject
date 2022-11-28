@@ -4,14 +4,7 @@ from map import *
 from enemy import *
 from ui import *
 
-
-# note: all art (sprites, bg, etc.) made by me!
-
-# make different backgrounds different modes
-# add ways to trigger changing of modes
-
-# make a start screen + story screen
-# make textbox 
+# note: all art (sprites, background, etc.) made by me!
 
 # make UI/Buttons class for HP and items collected
 
@@ -20,9 +13,6 @@ from ui import *
 # objects have description attached to them
 # can interact with objects using "Z"
 
-# make enemy class
-# def startButtonFunc(app):
-#     app.mode = 'gameMode'
 DEBUG = False
 mainCat = Cat(600, 600, 'images/bluemap1.png')
 bg1 = Background('images/bluemap1.png', 600, 600, mainCat)
@@ -40,26 +30,23 @@ def appStarted(app):
 
     gameMode2_appStarted(app)
     gameMode21_appStarted(app)
+
+    battleMode_appStarted(app)
 ###############################################
 def startButtonFunc(app):
     app.mode = 'gameMode'
-    app.prevMode = 'startScreenMode'
 
 def howToButtonFunc(app):
     app.mode = 'howToScreenMode'
-    app.prevMode = 'startScreenMode'
-
-def backButtonFunc(app):
-    app.mode = app.prevMode
 
 def startScreenMode_appStarted(app): #startScreenMode
     app.background = app.loadImage('images/startScreen.png')
     
-    app.startButton = Button('images/startButton.png', 150, 300, 'startButton',
+    app.startButton = Button('images/startButton.png', 150, 300,
                         startButtonFunc)
     app.startButton.appStarted(app)
     
-    app.howToButton = Button('images/howToButton.png', 150, 400, 'howToButton',
+    app.howToButton = Button('images/howToButton.png', 150, 400,
                         howToButtonFunc)
     app.howToButton.appStarted(app)
 
@@ -82,30 +69,33 @@ def startScreenMode_redrawAll(app, canvas):
                             text=f"{app.mouseX}, {app.mouseY}")
     
 ###########################################
-# DRAW IMAGE FOR HELP TEXTBOX LATER AND JUST SHOW IMAGE
+def howToButtonFunc2(app):
+    app.mode = 'startScreenMode'
+
 def howToScreenMode_appStarted(app):
-    # app.howToText = TextBox('texts/howtoplay.txt', 20, 20, 580, 580, False)
-    # app.howToText.appStarted(app)
-    # app.howToBackButton = Button()
-    pass
+    app.howToButton2 = Button('images/howToButton.png', 150, 400,
+                        howToButtonFunc2)
+    app.howToButton2.appStarted(app)
+
 def howToScreenMode_timerFired(app):
     # app.howToText.timerFired(app)
     pass
 def howToScreenMode_mousePressed(app, event):
-    pass
+    app.howToButton2.mousePressed(app, event)
 def howToScreenMode_mouseMoved(app, event):
     if DEBUG:
         app.mouseX = event.x
         app.mouseY = event.y
 def howToScreenMode_redrawAll(app, canvas):
     startScreenMode_redrawAll(app, canvas)
-    canvas.create_rectangle(200, 260, 430, 360, fill='white')
+    canvas.create_rectangle(200, 240, 430, 360, fill='white')
     displayedText = '''
         Use arrow keys to move around. 
         Press 'Z' to interact with something.
         Press 'Z' to continue text.
         Press 'X' to speed/skip up text.
-        Press 'C' to open inventory.
+        Press 'C' to see your health 
+        and items left to collect.
     '''
     canvas.create_text(300, 300, text=displayedText, font='Arial5',
                                     fill='black')
@@ -133,9 +123,9 @@ def gameMode_appStarted(app):
     app.scene12Text = TextBox('texts/scene1.2.txt', 20, 400, 580, 580, True)
     app.textOnScreen = True #Default is False, only True when textbox displayed
 
-    app.testDoor = InteractObj('redDoorObj.png',900, 480, 940, 530, 
+    app.testDoor = InteractObj('images/redDoorObj.png',900, 480, 940, 530, 
                     mainCat, bg1.bgImage.height, redDoorFunc)
-
+    app.testDoor.appStarted(app)
     app.bg1WallObj = []
     createWalls(bg1Walls, app, mainCat, bg1, app.bg1WallObj)
 
@@ -195,6 +185,9 @@ bg2 = Background('images/redmap1.png', 600, 600, mainCat2)
 def door2Func(app):
     app.mode = 'gameMode21'
 
+def blueDoorFunc(app):
+    app.mode = 'gameModeEnd'
+
 def gameMode2_appStarted(app):
     app.inventory = []
 
@@ -202,12 +195,15 @@ def gameMode2_appStarted(app):
     bg2.appStarted(app)
     app.scene21Text = TextBox('texts/scene2.1.txt', 20, 400, 580, 580, True)
     app.scene21Text.startText = True
-    # app.scene1Text.appStarted(app) # appstarted doens't do anything yet
+
     app.textOnScreen2 = True #Default is False, only True when textbox displayed
-    # print(f"appstarted textOnScreen2: {app.textOnScreen2}")
+  
     app.testDoor2 = InteractObj('images/redDoorObj.png',380, 720, 420, 760, 
                             mainCat2, bg2.bgImage.height, door2Func)
-
+    app.testDoor2.appStarted(app)
+    app.blueDoor = InteractObj('images/blueDoorObj.png',1640, 860, 1680, 900, 
+                            mainCat2, bg2.bgImage.height, blueDoorFunc)
+    app.blueDoor.appStarted(app)
     app.bg2WallObj = []
     createWalls(bg2Walls, app, mainCat2, bg2, app.bg2WallObj)
 
@@ -224,6 +220,8 @@ def gameMode2_keyPressed(app, event):
     if not app.textOnScreen2: mainCat2.keyPressed(app, event)
     app.scene21Text.keyPressed(app, event)
     app.testDoor2.keyPressed(app, event)
+    if app.catInventory >= 7:
+        app.blueDoor.keyPressed(app, event)
 
 def gameMode2_keyReleased(app, event):
     if not app.textOnScreen2: mainCat2.keyReleased(app, event)
@@ -236,9 +234,22 @@ def gameMode2_redrawAll(app, canvas):
     bg2.redrawAll(app, canvas)
     mainCat2.redrawAll(app, canvas)
     app.testDoor2.redrawAll(app, canvas)
+    if app.catInventory >= 7:
+        app.blueDoor.redrawAll(app, canvas)
     app.scene21Text.redrawAll(app, canvas)
     for wall in app.bg2WallObj:
         wall.redrawAll(app, canvas)
+    if app.catInventory == 7:
+        canvas.create_text(460, 40, text='''You found all 7 pieces!''',
+                                        font='Arial 20',
+                                        fill='white')
+        canvas.create_text(460, 65, text='''Find the blue door to go home.''',
+                                        font='Arial 20',
+                                        fill='white')
+    elif app.catInventory > 0:
+        canvas.create_text(460, 40, text=f"Pieces Left To Collect: {7 - app.catInventory}",
+                                        font='Arial 20',
+                                        fill='white')
 
 ###########################################
 ###########################################
@@ -262,21 +273,38 @@ def door21Func(app):
     app.mode = 'gameMode2'
     
 def gameMode21_appStarted(app):
-    app.inventory = []
-
     mainCat21.appStarted(app)
     bg21.appStarted(app)
     app.textOnScreen21 = False #Default is False, only True when textbox displayed
-    app.testDoor21 = InteractObj('images/redDoorObj.png',170, 850, 210, 940, 
+    app.testDoor21 = InteractObj('images/redDoorObj.png',170, 850, 210, 890, 
                             mainCat21, bg21.bgImage.height, door21Func)
-
+    app.testDoor21.appStarted(app)
+    
     app.graphRedMap21 = GraphCreator('redmap21', 19, 28)
 
-    app.redmap21enemy1 = Enemy('images/tempredcatsprites.png', 384, 130, 448, 192, 
+    app.redmap21enemy1 = Enemy('redmap21enemy1','images/tempredcatsprites.png', 384, 130, 448, 192, 
                                  mainCat21, bg21.bgImage.height, app.graphRedMap21)
-    # app.redmap21enemy1 = Enemy('images/tempredcatsprites.png', 480, 898, 544, 960, 
-                                # mainCat21, bg21.bgImage.height, app.graphRedMap21)
-    app.redmap21enemy1.appStarted(app)
+    app.redmap21enemy2 = Enemy('redmap21enemy2','images/tempredcatsprites.png', 640, 704, 704, 768, 
+                                mainCat21, bg21.bgImage.height, app.graphRedMap21)
+    app.redmap21enemy3 = Enemy('redmap21enemy3','images/tempredcatsprites.png', 128, 384, 192, 448, 
+                                mainCat21, bg21.bgImage.height, app.graphRedMap21)
+    app.redmap21enemy4 = Enemy('redmap21enemy4','images/tempredcatsprites.png', 1216, 192, 1280, 256, 
+                                mainCat21, bg21.bgImage.height, app.graphRedMap21)
+    app.redmap21enemy5 = Enemy('redmap21enemy5','images/tempredcatsprites.png', 1120, 576, 1184, 640, 
+                                mainCat21, bg21.bgImage.height, app.graphRedMap21)
+    app.redmap21enemy6 = Enemy('redmap21enemy6','images/tempredcatsprites.png', 1536, 512, 1600, 576, 
+                                mainCat21, bg21.bgImage.height, app.graphRedMap21)
+    app.redmap21enemy7 = Enemy('redmap21enemy7','images/tempredcatsprites.png', 1216, 1024, 1280, 1088, 
+                                mainCat21, bg21.bgImage.height, app.graphRedMap21)
+    app.enemyList = [app.redmap21enemy1, app.redmap21enemy2,app.redmap21enemy3,
+                     app.redmap21enemy4, app.redmap21enemy5, app.redmap21enemy6,
+                     app.redmap21enemy7 ]
+    # add healing objects that raise health around map
+
+    for mapEnemy in app.enemyList:
+        mapEnemy.appStarted(app)
+
+    # app.redmap21enemy1.appStarted(app)
     app.bg21WallObj = []
     createWalls(bg21Walls, app, mainCat21, bg21, app.bg21WallObj)
 
@@ -291,16 +319,147 @@ def gameMode21_keyReleased(app, event):
 def gameMode21_timerFired(app):
     mainCat21.timerFired(app)
     app.scene21Text.timerFired(app)
-    app.redmap21enemy1.timerFired(app)
+
+    for mapEnemy in app.enemyList:
+        if (mapEnemy.healthLevel != 0 and 
+            mapEnemy.hostilityLevel != 0):
+            mapEnemy.timerFired(app)
+    
 
 def gameMode21_redrawAll(app, canvas):
     bg21.redrawAll(app, canvas)
     mainCat21.redrawAll(app, canvas)
     app.testDoor21.redrawAll(app, canvas)
-    app.redmap21enemy1.redrawAll(app, canvas)
+    for mapEnemy in app.enemyList:
+        if (mapEnemy.healthLevel != 0 and 
+            mapEnemy.hostilityLevel != 0):
+            mapEnemy.redrawAll(app, canvas)
     # app.scene21Text.redrawAll(app, canvas)
     for wall in app.bg21WallObj:
         wall.redrawAll(app, canvas)
+    
+    if app.catInventory == 7:
+        canvas.create_text(460, 40, text='''You found all 7 pieces!''',
+                                        font='Arial 20',
+                                        fill='white')
+        canvas.create_text(460, 65, text='''Find the blue door to go home.''',
+                                        font='Arial 20',
+                                        fill='white')
+    elif app.catInventory > 0:
+        canvas.create_text(460, 40, text=f"Pieces Left To Collect: {7 - app.catInventory}",
+                                        font='Arial 20',
+                                        fill='white')
+    
+
+###########################################
+###########################################
+battleWalls = []
+
+def fightButFunc(app):
+    app.attacking = True
+
+def talkButFunc(app):
+    app.talking = True
+    app.talkText.startText = True
+
+def battleMode_appStarted(app):
+    app.batCat = battleCat()
+    # battleBg = Background('images/battlebg.png', 600, 600, batCat)
+
+    app.catHealth = 100
+    app.catInventory = 7 # number of blue pieces you have
+    # at the end, if cat's level is 3 or more, -> "bad" end
+    # cat level is greater than 0 but less than 3 -> neutral end
+    # cat level is 0 -> "good" end
+
+    # cat's level goes up by 0.5 for every cat killed
+    # killing final boss cat raises level by 3
+    app.catLevel = 0
+    app.catAttack = 10
+    # for each level up, cat's attack goes up by 10
+    app.battleNum = 1 #goes up to 7 for the 7th cat you can fight
+    app.battleText = 0 #resets to 0 after every battle
+
+    app.enemyInBattle = None
+    app.talking = False 
+    app.attacking = False 
+    app.defending = False
+    app.battleSelectOption = "fight"
+
+    app.battleBg = app.loadImage('images/battlebg.png')
+    app.batCat.appStarted(app)
+
+    app.defaultText = TextBox('texts/hostiletext.txt', 100, 260, 500, 425, True)
+    app.defaultText.startText = True
+
+    app.talkText = TextBox(f'texts/battle{app.battleNum}.{app.battleText}.txt',
+                        100, 260, 500, 425, True)
+
+    app.fightBut = Button('images/fightbutton.png', 186, 486, fightButFunc)
+    app.fightBut.appStarted(app)
+    app.talkBut = Button('images/talkbutton.png', 412, 486, talkButFunc)
+    app.talkBut.appStarted(app)
+
+# when not talking, show text depending on enemy hostility level
+
+def battleMode_keyPressed(app, event):
+    if not app.talking and not app.attacking and not app.defending:
+        if event.key == 'Right' or event.key == "Left":
+            if app.battleSelectOption == "fight":
+                app.battleSelectOption = "talk"
+            else:
+                app.battleSelectOption = "fight"
+        elif event.key == "z":
+            if app.battleSelectOption == "fight":
+                app.fightBut.funct(app)
+            else:
+                app.talkText = TextBox(f'texts/battle{app.battleNum}.{app.battleText}.txt',
+                        100, 260, 500, 425, True)
+                app.talkBut.funct(app)
+        elif event.key == "x":
+            app.defaultText.keyPressed(app, event)
+    elif app.talking:
+        app.talkText.keyPressed(app, event)
+
+def battleMode_keyReleased(app, event):
+    pass
+
+def battleMode_timerFired(app):
+    if not app.talking and not app.attacking and not app.defending:
+        app.defaultText.timerFired(app)
+    elif app.talking:
+        app.talkText.timerFired(app)
+
+def battleMode_redrawAll(app, canvas):
+    # add enemy hp and hostility level display
+    # add own hp display
+    # add own level display
+    # fix help screen
+    canvas.create_image(300, 300, 
+            image=ImageTk.PhotoImage(app.battleBg))
+    if not app.talking and not app.attacking and not app.defending:
+        app.defaultText.redrawAll(app, canvas)
+
+        if app.battleSelectOption == "fight":
+            app.fightBut.redrawAll(app, canvas)
+        elif app.battleSelectOption == "talk":
+            app.talkBut.redrawAll(app, canvas)
+    elif app.talking:
+        app.talkText.redrawAll(app, canvas)
+    elif app.defending:
+        app.batCat.redrawAll(app, canvas)
+    
+    #enemy health
+    canvas.create_text(485, 160, text=f"Enemy Health: {app.enemyInBattle.healthLevel}/100", 
+                                        font='Arial 15',
+                                        fill='white')
+    #player health and level
+    canvas.create_text(175, 550, text=f"Your Health: {app.catHealth}/100",
+                                        font='Arial 15',
+                                        fill='white')
+    canvas.create_text(400, 550, text=f"Your Level: {app.catLevel}",
+                                        font='Arial 15',
+                                        fill='white')
 
 ###########################################
 def main():

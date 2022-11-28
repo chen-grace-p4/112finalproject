@@ -1,11 +1,10 @@
 from cmu_112_graphics import *
 from mainCat import *
 class Button():
-    def __init__(self, image, x, y, type, func):
+    def __init__(self, image, x, y, func):
         self.cx = x
         self.cy = y
         self.image = image 
-        self.type = type
         self.buttonImage = image
         self.funct = func
     
@@ -51,9 +50,6 @@ class TextBox():
         # when text is showing, make cat unable to move
         # print("made textbox!")
         # self.cat = cat
-        
-    def appStarted(self, app):
-        pass
 
     def readFile(self):
         filename = self.fileName
@@ -85,6 +81,29 @@ class TextBox():
     def triggerFuncs(self, app):
         if self.fileName == 'texts/scene1.2.txt':
             app.mode = 'gameMode2'
+        if self.fileName[6:12] == 'battle':
+            if app.battleText == 4:
+                 app.battleText = 0
+            else:
+                app.battleText += 1
+            
+            displaytext = "texts/hostiletext.txt" #level is 3 or 4
+            if app.enemyInBattle.hostilityLevel == 0:
+                #add a blue piece to inventory
+                app.catInventory += 1
+                app.enemyInBattle.showing = False
+                # app.battleNum += 1 # add in later when i have more texts
+                app.battleText = 0
+                app.mode = 'gameMode21'
+            else:
+                app.enemyInBattle.hostilityLevel -= 1
+                if app.enemyInBattle.hostilityLevel == 2:
+                    displaytext = "texts/neutraltext.txt"
+                elif app.enemyInBattle.hostilityLevel <= 1:
+                    displaytext = "texts/friendlytext.txt"
+            app.defaultText = TextBox(displaytext, 100, 260, 500, 425, True)
+            app.defaultText.startText = True
+            app.talking = False
 
     def keyPressed(self, app, event):
         if self.startText and self.textEnded and event.key == 'z':
