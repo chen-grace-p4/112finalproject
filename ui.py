@@ -81,7 +81,8 @@ class TextBox():
     def triggerFuncs(self, app):
         if self.fileName == 'texts/scene1.2.txt':
             app.mode = 'gameMode2'
-        if self.fileName[6:12] == 'battle':
+
+        elif self.fileName[6:12] == 'battle':
             if app.battleText == 4:
                  app.battleText = 0
             else:
@@ -104,6 +105,38 @@ class TextBox():
             app.defaultText = TextBox(displaytext, 100, 260, 500, 425, True)
             app.defaultText.startText = True
             app.talking = False
+        
+        elif self.fileName[6:8] == 'bf':
+            app.mode = 'bossBattleMode'
+            app.enemyInBattle = app.bossCat
+        
+        elif self.fileName[6:14] == 'bosshost':
+            displaytext = "texts/hostiletext.txt" 
+            app.bossDefaultText = TextBox(displaytext, 100, 260, 500, 425, True)
+            app.bossDefaultText.startText = True
+            app.bossTalking = False
+        
+        elif self.fileName[6:11] == 'bossf':
+            if app.bossBattleText == 4:
+                 app.bossBattleText = 0
+            else:
+                app.bossBattleText += 1
+            
+            displaytext = "texts/hostiletext.txt" #level is 3 or 4
+            if app.enemyInBattle.hostilityLevel == 0:
+                app.enemyInBattle.showing = False
+                app.bossBattleText = 0
+                app.mode = 'gameMode2'
+                app.bossCat.defeated = True
+            else:
+                app.enemyInBattle.hostilityLevel -= 1
+                if app.enemyInBattle.hostilityLevel == 2:
+                    displaytext = "texts/neutraltext.txt"
+                elif app.enemyInBattle.hostilityLevel <= 1:
+                    displaytext = "texts/friendlytext.txt"
+            app.bossDefaultText = TextBox(displaytext, 100, 260, 500, 425, True)
+            app.bossDefaultText.startText = True
+            app.bossTalking = False
 
     def keyPressed(self, app, event):
         if self.startText and self.textEnded and event.key == 'z':
@@ -114,6 +147,8 @@ class TextBox():
                     app.textOnScreen = False
                 if(app.mode == "gameMode2"):
                     app.textOnScreen2 = False
+                if(app.mode == "gameMode21"):
+                    app.textOnScreen21 = False
                 self.triggerFuncs(self, app)
             else:
                 self.textEnded = False 

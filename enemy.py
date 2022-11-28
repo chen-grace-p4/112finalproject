@@ -1,5 +1,6 @@
 from cmu_112_graphics import * 
 from map import *
+from ui import *
 
 # (startRow, startCol, endRow, endCol)
 REDMAP12PATHS = ((12, 2, 17, 4), (14, 5, 15, 14),
@@ -63,24 +64,11 @@ class GraphCreator():
 # maybe don't inherit from object and do collision by graph
 class Enemy(Object):
     # give it a spawning point on map
-    def __init__(self, name, image, x0, y0, x1, y1, cat, bgHeight, graph):
+    def __init__(self, image, x0, y0, x1, y1, cat, bgHeight, graph):
         self.healthLevel = 100
         self.hostilityLevel = 4
 
-        self.name = name
         self.showing = True
-        # player can choose to fight to lower health level or talk to 
-        # lower hostility level 
-        # when either hp or hostility reaches 0, the battle ends and 
-        # the playet gets a piece of a blue door
-
-        # if they fight, they will earn exp and level up themselves
-        # it will be easier to fight the boss battle and go home
-        # but they will leave thinking they shouldve never came and red sucks
-
-        # if they talk, they will earn no exp and have to fight longer,
-        # but at the end they will have become friends with the red cats
-
 
         self.image = image
         super().__init__(x0, y0, x1, y1, cat, bgHeight)
@@ -307,8 +295,71 @@ class Enemy(Object):
 # enemy that you can talk with outside of battle
 # starts battle by dialogue, not by contact
 # boss enemy spawns in a given location 
-class BossEnemy(Enemy):
-    def catInRange(self, app):
-        # determines if cat is in range to start dialogue
-        pass
-    pass
+class BossEnemy(Object):
+    def __init__(self, image, x0, y0, x1, y1, cat, bgHeight):
+        self.healthLevel = 100
+        self.hostilityLevel = 4
+
+        self.showing = True
+
+        self.image = image
+        super().__init__(x0, y0, x1, y1, cat, bgHeight)
+
+        self.bgY0 = y0 
+        self.bgY1 = y1 
+
+        self.cx = self.x0 + 32
+        self.cy = self.bgY0 + 32
+
+        self.timePassed = 0
+
+        catLoca = self.cat.getCatLocation()
+        self.currCatX = catLoca[0]
+        self.currCatY = catLoca[1]
+
+        self.defeated = False
+
+    def appStarted(self, app):
+        objImage = app.loadImage(self.image)
+        self.objImage = objImage.crop((0, 0, 64, 64))
+
+    def catInRange(self):
+        return (abs(self.currCatX - self.cx) <= 100 and 
+                abs(self.currCatY - self.cy) <= 100)
+
+    # if user is neutral or hostile, talking to the boss is useless
+    # there will only be friendly responses if user has been friendly
+
+    def timerFired(self, app):
+        if (self.showing):
+            catLoca = self.cat.getCatLocation()
+            self.currCatX = catLoca[0]
+            self.currCatY = catLoca[1]
+            self.timePassed += 1
+
+            if self.timePassed == 50:
+                if (not self.defeated and self.catInRange() and not app.textOnScreen2):
+                    # print("cat in range")
+                    if (app.catInventory >= 7):
+                        bossFile = "texts/bfbossneutral.txt"
+                        if (app.catLevel >= 3):
+                            bossFile = "texts/bfbosshostile.txt"
+                        elif (app.catLevel == 0):
+                            bossFile = "texts/bfbossfriendly.txt"
+                        app.bossText = TextBox(bossFile, 20, 400, 580, 580, True)
+                    app.bossText.startText = True
+                    app.textOnScreen2 = True
+            elif self.timePassed > 50:
+                self.timePassed = 0
+        # print("cat not in range")
+    
+    def redrawAll(self, app, canvas):
+        if (self.showing):
+            cx = self.x0 + (self.objImage.width/2)
+            cy = self.y0 + (self.objImage.height/2)
+            cx -= self.cat.scrollX
+            cy -= self.cat.scrollY
+    
+            canvas.create_image(cx, cy,   
+                image=ImageTk.PhotoImage(self.objImage))
+            self.checkCollision()

@@ -32,6 +32,7 @@ def appStarted(app):
     gameMode21_appStarted(app)
 
     battleMode_appStarted(app)
+    bossBattleMode_appStarted(app)
 ###############################################
 def startButtonFunc(app):
     app.mode = 'gameMode'
@@ -167,6 +168,10 @@ def gameMode_redrawAll(app, canvas):
     for wall in app.bg1WallObj:
         wall.redrawAll(app, canvas)
     
+    canvas.create_text(100, 40, text=f"Your Health: {app.catHealth}/100",
+                                        font='Arial 17',
+                                        fill='white')
+    
 ###########################################
 ###########################################
 bg2Walls = [(0, 0, 680, 500),
@@ -196,6 +201,11 @@ def gameMode2_appStarted(app):
     app.scene21Text = TextBox('texts/scene2.1.txt', 20, 400, 580, 580, True)
     app.scene21Text.startText = True
 
+    app.bossCat = BossEnemy('images/tempredcatsprites.png', 840, 300, 904, 364,
+                                mainCat2, bg2.bgImage.height)
+    app.bossCat.appStarted(app)
+    app.bossText = TextBox('texts/bossnotready.txt', 20, 400, 580, 580, True)
+
     app.textOnScreen2 = True #Default is False, only True when textbox displayed
   
     app.testDoor2 = InteractObj('images/redDoorObj.png',380, 720, 420, 760, 
@@ -218,6 +228,7 @@ def createWalls(wallList, app, cat, bg, newList):
 
 def gameMode2_keyPressed(app, event):
     if not app.textOnScreen2: mainCat2.keyPressed(app, event)
+    app.bossText.keyPressed(app, event)
     app.scene21Text.keyPressed(app, event)
     app.testDoor2.keyPressed(app, event)
     if app.catInventory >= 7:
@@ -229,27 +240,40 @@ def gameMode2_keyReleased(app, event):
 def gameMode2_timerFired(app):
     mainCat2.timerFired(app)
     app.scene21Text.timerFired(app)
+    app.bossText.timerFired(app)
+    app.bossCat.timerFired(app)
 
 def gameMode2_redrawAll(app, canvas):
     bg2.redrawAll(app, canvas)
     mainCat2.redrawAll(app, canvas)
+    app.bossCat.redrawAll(app, canvas)
     app.testDoor2.redrawAll(app, canvas)
+
     if app.catInventory >= 7:
         app.blueDoor.redrawAll(app, canvas)
+
     app.scene21Text.redrawAll(app, canvas)
+    app.bossText.redrawAll(app, canvas)
+
     for wall in app.bg2WallObj:
         wall.redrawAll(app, canvas)
-    if app.catInventory == 7:
-        canvas.create_text(460, 40, text='''You found all 7 pieces!''',
-                                        font='Arial 20',
-                                        fill='white')
-        canvas.create_text(460, 65, text='''Find the blue door to go home.''',
-                                        font='Arial 20',
-                                        fill='white')
-    elif app.catInventory > 0:
-        canvas.create_text(460, 40, text=f"Pieces Left To Collect: {7 - app.catInventory}",
-                                        font='Arial 20',
-                                        fill='white')
+    
+    if not (app.textOnScreen2):
+        canvas.create_text(100, 40, text=f"Your Health: {app.catHealth}/100",
+                                            font='Arial 17',
+                                            fill='white')
+        
+        if app.catInventory == 7:
+            canvas.create_text(460, 40, text='''You found all 7 pieces!''',
+                                            font='Arial 20',
+                                            fill='white')
+            canvas.create_text(460, 65, text='''Find the blue door to go home.''',
+                                            font='Arial 20',
+                                            fill='white')
+        elif app.catInventory > 0:
+            canvas.create_text(460, 40, text=f"Pieces Left To Collect: {7 - app.catInventory}",
+                                            font='Arial 20',
+                                            fill='white')
 
 ###########################################
 ###########################################
@@ -271,30 +295,34 @@ mainCat21 = Cat(600, 600, 'images/redmap12.png')
 bg21 = Background('images/redmap12.png', 600, 600, mainCat21)
 def door21Func(app):
     app.mode = 'gameMode2'
-    
+
+def healthItemFunc(app):
+    app.catHealth += 15
+
 def gameMode21_appStarted(app):
     mainCat21.appStarted(app)
     bg21.appStarted(app)
+
     app.textOnScreen21 = False #Default is False, only True when textbox displayed
     app.testDoor21 = InteractObj('images/redDoorObj.png',170, 850, 210, 890, 
                             mainCat21, bg21.bgImage.height, door21Func)
     app.testDoor21.appStarted(app)
-    
+
     app.graphRedMap21 = GraphCreator('redmap21', 19, 28)
 
-    app.redmap21enemy1 = Enemy('redmap21enemy1','images/tempredcatsprites.png', 384, 130, 448, 192, 
+    app.redmap21enemy1 = Enemy('images/tempredcatsprites.png', 384, 130, 448, 192, 
                                  mainCat21, bg21.bgImage.height, app.graphRedMap21)
-    app.redmap21enemy2 = Enemy('redmap21enemy2','images/tempredcatsprites.png', 640, 704, 704, 768, 
+    app.redmap21enemy2 = Enemy('images/tempredcatsprites.png', 640, 704, 704, 768, 
                                 mainCat21, bg21.bgImage.height, app.graphRedMap21)
-    app.redmap21enemy3 = Enemy('redmap21enemy3','images/tempredcatsprites.png', 128, 384, 192, 448, 
+    app.redmap21enemy3 = Enemy('images/tempredcatsprites.png', 128, 384, 192, 448, 
                                 mainCat21, bg21.bgImage.height, app.graphRedMap21)
-    app.redmap21enemy4 = Enemy('redmap21enemy4','images/tempredcatsprites.png', 1216, 192, 1280, 256, 
+    app.redmap21enemy4 = Enemy('images/tempredcatsprites.png', 1216, 192, 1280, 256, 
                                 mainCat21, bg21.bgImage.height, app.graphRedMap21)
-    app.redmap21enemy5 = Enemy('redmap21enemy5','images/tempredcatsprites.png', 1120, 576, 1184, 640, 
+    app.redmap21enemy5 = Enemy('images/tempredcatsprites.png', 1120, 576, 1184, 640, 
                                 mainCat21, bg21.bgImage.height, app.graphRedMap21)
-    app.redmap21enemy6 = Enemy('redmap21enemy6','images/tempredcatsprites.png', 1536, 512, 1600, 576, 
+    app.redmap21enemy6 = Enemy('images/tempredcatsprites.png', 1536, 512, 1600, 576, 
                                 mainCat21, bg21.bgImage.height, app.graphRedMap21)
-    app.redmap21enemy7 = Enemy('redmap21enemy7','images/tempredcatsprites.png', 1216, 1024, 1280, 1088, 
+    app.redmap21enemy7 = Enemy('images/tempredcatsprites.png', 1216, 1024, 1280, 1088, 
                                 mainCat21, bg21.bgImage.height, app.graphRedMap21)
     app.enemyList = [app.redmap21enemy1, app.redmap21enemy2,app.redmap21enemy3,
                      app.redmap21enemy4, app.redmap21enemy5, app.redmap21enemy6,
@@ -338,6 +366,10 @@ def gameMode21_redrawAll(app, canvas):
     for wall in app.bg21WallObj:
         wall.redrawAll(app, canvas)
     
+    canvas.create_text(100, 40, text=f"Your Health: {app.catHealth}/100",
+                                        font='Arial 17',
+                                        fill='white')
+
     if app.catInventory == 7:
         canvas.create_text(460, 40, text='''You found all 7 pieces!''',
                                         font='Arial 20',
@@ -353,6 +385,17 @@ def gameMode21_redrawAll(app, canvas):
 
 ###########################################
 ###########################################
+# player can choose to fight to lower health level or talk to 
+# lower hostility level 
+# when either hp or hostility reaches 0, the battle ends and 
+# the playet gets a piece of a blue door
+
+# if they fight, they will earn exp and level up themselves
+# it will be easier to fight the boss battle and go home
+# but they will leave thinking they shouldve never came and red sucks
+
+# if they talk, they will earn no exp and have to fight longer,
+# but at the end they will have become friends with the red cats
 battleWalls = []
 
 def fightButFunc(app):
@@ -431,10 +474,6 @@ def battleMode_timerFired(app):
         app.talkText.timerFired(app)
 
 def battleMode_redrawAll(app, canvas):
-    # add enemy hp and hostility level display
-    # add own hp display
-    # add own level display
-    # fix help screen
     canvas.create_image(300, 300, 
             image=ImageTk.PhotoImage(app.battleBg))
     if not app.talking and not app.attacking and not app.defending:
@@ -462,6 +501,105 @@ def battleMode_redrawAll(app, canvas):
                                         fill='white')
 
 ###########################################
+###########################################
+###########################################
+
+battleWalls = []
+
+def bossFightButFunc(app):
+    app.bossAttacking = True
+
+def bossTalkButFunc(app):
+    app.bossTalking = True
+    app.bossTalkText.startText = True
+
+def bossBattleMode_appStarted(app):
+    app.batCat = battleCat()
+    app.bossBattleText = 0 #resets to 0 after every battle
+
+    app.bossTalking = False 
+    app.bossAttacking = False 
+    app.bossDefending = False
+    app.bossBattleSelectOption = "fight"
+
+    app.batCat.appStarted(app)
+
+    app.bossDefaultText = TextBox('texts/hostiletext.txt', 100, 260, 500, 425, True)
+    app.bossDefaultText.startText = True
+
+    if app.catLevel == 0:
+        app.bossTalkText = TextBox(f'texts/bossfriend1.{app.bossBattleText}.txt',
+                        100, 260, 500, 425, True)
+    else:
+        app.bossTalkText = TextBox(f'texts/bosshostneut.txt',
+                        100, 260, 500, 425, True)
+
+    app.bossFightBut = Button('images/fightbutton.png', 186, 486, bossFightButFunc)
+    app.bossFightBut.appStarted(app)
+    app.bossTalkBut = Button('images/talkbutton.png', 412, 486, bossTalkButFunc)
+    app.bossTalkBut.appStarted(app)
+
+# when not talking, show text depending on enemy hostility level
+
+def bossBattleMode_keyPressed(app, event):
+    if not app.bossTalking and not app.bossAttacking and not app.bossDefending:
+        if event.key == 'Right' or event.key == "Left":
+            if app.bossBattleSelectOption == "fight":
+                app.bossBattleSelectOption = "talk"
+            else:
+                app.bossBattleSelectOption = "fight"
+        elif event.key == "z":
+            if app.bossBattleSelectOption == "fight":
+                app.bossFightBut.funct(app)
+            else:
+                if app.catLevel == 0:
+                    app.bossTalkText = TextBox(f'texts/bossfriend1.{app.bossBattleText}.txt',
+                        100, 260, 500, 425, True)
+                else:
+                    app.bossTalkText = TextBox(f'texts/bosshostneut.txt',
+                        100, 260, 500, 425, True)
+                app.bossTalkBut.funct(app)
+        elif event.key == "x":
+            app.bossDefaultText.keyPressed(app, event)
+    elif app.bossTalking:
+        app.bossTalkText.keyPressed(app, event)
+
+def bossBattleMode_keyReleased(app, event):
+    pass
+
+def bossBattleMode_timerFired(app):
+    if not app.bossTalking and not app.bossAttacking and not app.bossDefending:
+        app.bossDefaultText.timerFired(app)
+    elif app.bossTalking:
+        app.bossTalkText.timerFired(app)
+
+def bossBattleMode_redrawAll(app, canvas):
+    canvas.create_image(300, 300, 
+            image=ImageTk.PhotoImage(app.battleBg))
+    if not app.bossTalking and not app.bossAttacking and not app.bossDefending:
+        app.bossDefaultText.redrawAll(app, canvas)
+
+        if app.bossBattleSelectOption == "fight":
+            app.bossFightBut.redrawAll(app, canvas)
+        elif app.bossBattleSelectOption == "talk":
+            app.bossTalkBut.redrawAll(app, canvas)
+    elif app.bossTalking:
+        app.bossTalkText.redrawAll(app, canvas)
+    elif app.bossDefending:
+        app.bossBatCat.redrawAll(app, canvas)
+    
+    #enemy health
+    canvas.create_text(485, 160, text=f"Enemy Health: {app.enemyInBattle.healthLevel}/100", 
+                                        font='Arial 15',
+                                        fill='white')
+    #player health and level
+    canvas.create_text(175, 550, text=f"Your Health: {app.catHealth}/100",
+                                        font='Arial 15',
+                                        fill='white')
+    canvas.create_text(400, 550, text=f"Your Level: {app.catLevel}",
+                                        font='Arial 15',
+                                        fill='white')
+
 def main():
     print("Running game!")
     runApp(width=600,height=600)

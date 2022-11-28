@@ -155,7 +155,7 @@ class Cat():
             canvas.create_image(x, y, 
             image=ImageTk.PhotoImage(app.catImage))
 
-# add physics here?
+# add physics here
 class battleCat():
     def __init__(self):
         self.cx = 300
