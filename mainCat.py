@@ -158,10 +158,74 @@ class Cat():
 # add physics here
 class battleCat():
     def __init__(self):
+        leftBoundX, upperBoundY, rightBoundX, lowerBoundY = 100, 275, 500, 425
+        self.leftBoundX = leftBoundX 
+        self.rightBoundX = rightBoundX
+        self.upperBoundY = upperBoundY
+        self.lowerBoundY = lowerBoundY
+
         self.cx = 300
-        self.cy = 300
+        # self.cy = 350
+        self.cy = self.lowerBoundY - 20 #default for if cat can jump
         self.image = 'images/battlecat.png'
+
+        self.canMoveVert = False
+        # if self.canMoveVert is False, then cat can jump (add in keypressed)
+
+        self.timePassed = 0
+
+        self.isJumpingUp = False
+        self.isFallingDown = False
+        self.accelRate = 10
+
+        self.prevKeyPressed = ""
+        self.prevKeyReleased = ""
     
+    def keyPressed(self, app, event):
+        if event.key == "Right":
+            if self.cx + 16 < self.rightBoundX:
+                self.cx += 10
+        elif event.key == "Left":
+            if self.cx - 16 > self.leftBoundX:
+                self.cx -= 10
+        
+        if self.canMoveVert:
+            if event.key == "Up":
+                if self.cy - 16 > self.upperBoundY:
+                    self.cy -= 10
+            elif event.key == "Down":
+                if self.cy + 20 < self.lowerBoundY:
+                    self.cy += 10
+
+        # cat can jump if it can't move vertically
+        # cat needs to be on ground first to jump (prevent double jumps)
+        if not self.canMoveVert and self.cy >= self.lowerBoundY - 20:  
+            if event.key == "Up" or event.key == "Space":
+                self.isJumpingUp = True
+        self.prevKeyPressed = event.key
+
+    def keyReleased(self, app, event):
+        self.prevKeyReleased = event.key
+
+    def timerFired(self, app):
+        self.timePassed += 1
+        if self.isJumpingUp:
+            if self.accelRate > 0 and self.cy - 16 > self.upperBoundY: 
+                self.cy -= self.accelRate
+                self.accelRate -= 0.7
+            else:
+                self.isJumpingUp = False 
+                self.isFallingDown = True
+        elif self.isFallingDown:
+            if self.cy + 20 < self.lowerBoundY:
+                    self.cy += self.accelRate
+                    self.accelRate += 0.7
+            else:
+                self.isFallingDown = False
+                self.accelRate = 10
+            # elif self.timePassed > 20:
+            #     self.timePassed = 0
+
     def appStarted(self, app):
         self.sprite = app.loadImage(self.image)
 

@@ -105,10 +105,13 @@ class TextBox():
             app.defaultText = TextBox(displaytext, 100, 260, 500, 425, True)
             app.defaultText.startText = True
             app.talking = False
+
+            # set app.enemyAttack to a new randomized attack 
+            app.defending = True
         
         elif self.fileName[6:14] == 'bossnotr':
             app.bossText = TextBox('texts/bossnotready.txt', 20, 400, 580, 580, True)
-            
+
         elif self.fileName[6:8] == 'bf':
             app.mode = 'bossBattleMode'
             app.enemyInBattle = app.bossCat

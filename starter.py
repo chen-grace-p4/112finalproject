@@ -18,8 +18,8 @@ mainCat = Cat(600, 600, 'images/bluemap1.png')
 bg1 = Background('images/bluemap1.png', 600, 600, mainCat)
 
 def appStarted(app):
-    app.mode = 'startScreenMode'
-    # app.mode = 'gameMode2'
+    # app.mode = 'startScreenMode'
+    app.mode = 'gameMode21'
     app.prevMode = ''
     if DEBUG:
         app.mouseX = 0
@@ -472,15 +472,20 @@ def battleMode_keyPressed(app, event):
             app.defaultText.keyPressed(app, event)
     elif app.talking:
         app.talkText.keyPressed(app, event)
+    elif app.defending:
+        app.batCat.keyPressed(app, event)
 
 def battleMode_keyReleased(app, event):
-    pass
+    if app.defending:
+        app.batCat.keyReleased(app, event)
 
 def battleMode_timerFired(app):
     if not app.talking and not app.attacking and not app.defending:
         app.defaultText.timerFired(app)
     elif app.talking:
         app.talkText.timerFired(app)
+    elif app.defending:
+        app.batCat.timerFired(app)
 
 def battleMode_redrawAll(app, canvas):
     canvas.create_image(300, 300, 
