@@ -106,6 +106,9 @@ class TextBox():
             app.defaultText.startText = True
             app.talking = False
         
+        elif self.fileName[6:14] == 'bossnotr':
+            app.bossText = TextBox('texts/bossnotready.txt', 20, 400, 580, 580, True)
+            
         elif self.fileName[6:8] == 'bf':
             app.mode = 'bossBattleMode'
             app.enemyInBattle = app.bossCat

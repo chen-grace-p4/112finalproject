@@ -155,7 +155,7 @@ class Object():
                 self.cat.toggleMoveDown = True
                 touchedTopEdge = False
                 self.catTouchingObj = False
-    
+        
     def redrawAll(self, app, canvas):
         if (self.onScreen):
             x0 = self.x0 
@@ -179,16 +179,37 @@ class InteractObj(Object):
         self.image = image
         self.funct = func
         super().__init__(x0, y0, x1, y1, cat, bgHeight)
+
+        catLoca = self.cat.getCatLocation()
+        self.currCatX = catLoca[0]
+        self.currCatY = catLoca[1]
+
+        self.bgY0 = y0 
+        self.cx = self.x0 + 32
+        self.cy = self.bgY0 + 32
     
     def appStarted(self, app):
         self.objImage = app.loadImage(self.image)
-        # pass
 
+    def catNearObj(self):
+        return (abs(self.currCatX - self.cx) <= 64 and 
+                abs(self.currCatY - self.cy) <= 64)
+                
     def keyPressed(self, app, event):
-        if (self.catTouchingObj and event.key == 'z'):
+        if (self.catNearObj() and self.catTouchingObj and event.key == 'z'):
+            # print(f"{self.image} key pressed")
             self.funct(app)
 
     def redrawAll(self, app, canvas):
+        catLoca = self.cat.getCatLocation()
+        catX = catLoca[0]
+        catY = catLoca[1]
+        self.currCatX = catX 
+        self.currCatY = catY
+
+        self.cx = self.x0 + 32
+        self.cy = self.bgY0 + 32
+
         if (self.onScreen):
             cx = self.x0 + (self.objImage.width/2)
             cy = self.y0 + (self.objImage.height/2)

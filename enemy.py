@@ -347,6 +347,7 @@ class BossEnemy(Object):
                         elif (app.catLevel == 0):
                             bossFile = "texts/bfbossfriendly.txt"
                         app.bossText = TextBox(bossFile, 20, 400, 580, 580, True)
+                    # print("hello")
                     app.bossText.startText = True
                     app.textOnScreen2 = True
             elif self.timePassed > 50:
