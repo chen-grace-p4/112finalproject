@@ -35,6 +35,7 @@ class normalAttack1(enemyAttack):
             if self.timePassed >= 400:
                 self.attackOn = False
                 app.defending = False
+                app.bossDefending = False
     
     def redrawAll(self, app, canvas):
         if self.attackOn:
@@ -60,6 +61,7 @@ class normalAttack2(enemyAttack):
             if self.timePassed >= 400:
                 self.attackOn = False
                 app.defending = False
+                app.bossDefending = False
     
     def redrawAll(self, app, canvas):
         if self.attackOn:
@@ -84,6 +86,7 @@ class normalAttack3(enemyAttack):
             if self.timePassed >= 400:
                 self.attackOn = False
                 app.defending = False
+                app.bossDefending = False
     
     def redrawAll(self, app, canvas):
         if self.attackOn:

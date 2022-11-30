@@ -78,6 +78,27 @@ class TextBox():
             elif self.timePassed > 2:
                 self.timePassed = 0
 
+    def startEnemyAttackFunc(self, app):
+        app.defending = True
+        app.bossDefending = True
+        import random
+        attack1 = normalAttack1()
+        attack2 = normalAttack2()
+        attack3 = normalAttack3()
+        enemyAttOptions = [attack1, attack2, attack3]
+        
+        randindex = random.randint(0, 2) # default 0, 2
+        app.enemyAttack = enemyAttOptions[randindex]
+        app.enemyAttack.attackOn = True
+        
+        if randindex == 2:
+            app.batCat.cy = app.batCat.lowerBoundY - 20
+            app.batCat.canMoveVert = False
+        else:
+            app.batCat.cx = 300
+            app.batCat.cy = 350
+            app.batCat.canMoveVert = True
+
     @staticmethod
     def triggerFuncs(self, app):
         if self.fileName == 'texts/scene1.2.txt':
@@ -104,32 +125,11 @@ class TextBox():
                     displaytext = "texts/neutraltext.txt"
                 elif app.enemyInBattle.hostilityLevel <= 1:
                     displaytext = "texts/friendlytext.txt"
-                # set app.enemyAttack to a new randomized attack and activate it
-                app.defending = True
-                import random
-                attack1 = normalAttack1()
-                attack2 = normalAttack2()
-                attack3 = normalAttack3()
-                enemyAttOptions = [attack1, attack2, attack3]
-                
-                randindex = random.randint(0, 2)
-                # randindex = 2
-                app.enemyAttack = enemyAttOptions[randindex]
-                app.enemyAttack.attackOn = True
-
-                if randindex == 2:
-                    app.batCat.cy = app.batCat.lowerBoundY - 20
-                    app.batCat.canMoveVert = False
-                else:
-                    app.batCat.cx = 300
-                    app.batCat.cy = 350
-                    app.batCat.canMoveVert = True
+                self.startEnemyAttackFunc(app)
 
             app.defaultText = TextBox(displaytext, 100, 260, 500, 425, True)
             app.defaultText.startText = True
             app.talking = False
-
-            
         
         elif self.fileName[6:14] == 'bossnotr':
             app.bossText = TextBox('texts/bossnotready.txt', 20, 400, 580, 580, True)
@@ -143,6 +143,8 @@ class TextBox():
             app.bossDefaultText = TextBox(displaytext, 100, 260, 500, 425, True)
             app.bossDefaultText.startText = True
             app.bossTalking = False
+
+            self.startEnemyAttackFunc(app)
         
         elif self.fileName[6:11] == 'bossf':
             if app.bossBattleText == 4:
@@ -162,25 +164,8 @@ class TextBox():
                     displaytext = "texts/neutraltext.txt"
                 elif app.enemyInBattle.hostilityLevel <= 1:
                     displaytext = "texts/friendlytext.txt"
-                # set app.enemyAttack to a new randomized attack and activate it
-                app.bossDefending = True
-                import random
-                attack1 = normalAttack1()
-                attack2 = normalAttack2()
-                attack3 = normalAttack3()
-                enemyAttOptions = [attack1, attack2, attack3]
                 
-                randindex = random.randint(0, 2) # default 0, 2
-                app.enemyAttack = enemyAttOptions[randindex]
-                app.enemyAttack.attackOn = True
-                
-                if randindex == 2:
-                    app.batCat.cy = app.batCat.lowerBoundY - 20
-                    app.batCat.canMoveVert = False
-                else:
-                    app.batCat.cx = 300
-                    app.batCat.cy = 350
-                    app.batCat.canMoveVert = True
+                self.startEnemyAttackFunc(app)
 
             app.bossDefaultText = TextBox(displaytext, 100, 260, 500, 425, True)
             app.bossDefaultText.startText = True
@@ -231,8 +216,3 @@ class TextBox():
         # and when to go to the next line
         # use a loop
         # when text is done showing, delete textbox and move cat
-        pass
-
-# make class that stores list of TextBoxes for every scene
-# make class for "static UI" the user can't interact with (HP)
-# inventory

@@ -273,7 +273,10 @@ def gameMode2_redrawAll(app, canvas):
                                             font='Arial 17',
                                             fill='white')
         
-        if app.catInventory == 7:
+        if app.catInventory == 0:
+            canvas.create_text(300, 10, text="Interact with red cats to get enough pieces to go home.", 
+                                font='Arial 10', fill='#8ce8ff')
+        elif app.catInventory == 7:
             canvas.create_text(460, 40, text='''You found all 7 pieces!''',
                                             font='Arial 20',
                                             fill='white')
@@ -285,14 +288,13 @@ def gameMode2_redrawAll(app, canvas):
                                             font='Arial 20',
                                             fill='white')
         
-        if app.catHealth < 20:
+        if app.catHealth < 20 and app.catInventory < 7:
             canvas.create_text(300, 80, text="Red cats will not interact with you if", 
                                 font='Arial 15', fill='#8ce8ff')
             canvas.create_text(300, 100, text="your health is too low. Green items will heal you.",
                                 font='Arial 15', fill='#8ce8ff')
         
-        canvas.create_text(300, 10, text="Interact with red cats to get enough pieces to go home.", 
-                                font='Arial 10', fill='#8ce8ff')
+        
 
 ###########################################
 ###########################################
@@ -317,6 +319,8 @@ def door21Func(app):
 
 def healthItemFunc(app):
     app.catHealth += 15
+    if app.catHealth > 100:
+        app.catHealth = 100
 
 def gameMode21_appStarted(app):
     mainCat21.appStarted(app)
@@ -346,12 +350,24 @@ def gameMode21_appStarted(app):
     app.enemyList = [app.redmap21enemy1, app.redmap21enemy2,app.redmap21enemy3,
                      app.redmap21enemy4, app.redmap21enemy5, app.redmap21enemy6,
                      app.redmap21enemy7 ]
-    # add healing objects that raise health around map
 
     for mapEnemy in app.enemyList:
         mapEnemy.appStarted(app)
+    
+    # make healing items have a cool down later
+    app.healing1 = InteractObj('images/healthitem.png', 130, 770, 192, 832,
+                                mainCat21, bg21.bgImage.height, healthItemFunc)
+    app.healing2 = InteractObj('images/healthitem.png', 768, 130, 830, 192,
+                                mainCat21, bg21.bgImage.height, healthItemFunc)
+    app.healing3 = InteractObj('images/healthitem.png', 1024, 768, 1086, 832,
+                                mainCat21, bg21.bgImage.height, healthItemFunc)
+    app.healing4 = InteractObj('images/healthitem.png', 1600, 258, 1662, 320,
+                                mainCat21, bg21.bgImage.height, healthItemFunc)
+    
+    app.healingList = [app.healing1, app.healing2, app.healing3, app.healing4]
+    for healing in app.healingList:
+        healing.appStarted(app)
 
-    # app.redmap21enemy1.appStarted(app)
     app.bg21WallObj = []
     createWalls(bg21Walls, app, mainCat21, bg21, app.bg21WallObj)
 
@@ -359,6 +375,8 @@ def gameMode21_keyPressed(app, event):
     if not app.textOnScreen21: mainCat21.keyPressed(app, event)
     app.scene21Text.keyPressed(app, event)
     app.testDoor21.keyPressed(app, event)
+    for healing in app.healingList:
+        healing.keyPressed(app, event)
 
 def gameMode21_keyReleased(app, event):
     if not app.textOnScreen21: mainCat21.keyReleased(app, event)
@@ -381,7 +399,10 @@ def gameMode21_redrawAll(app, canvas):
         if (mapEnemy.healthLevel != 0 and 
             mapEnemy.hostilityLevel != 0):
             mapEnemy.redrawAll(app, canvas)
-    # app.scene21Text.redrawAll(app, canvas)
+    
+    for healing in app.healingList:
+        healing.redrawAll(app, canvas)
+
     for wall in app.bg21WallObj:
         wall.redrawAll(app, canvas)
     
@@ -401,13 +422,14 @@ def gameMode21_redrawAll(app, canvas):
                                         font='Arial 20',
                                         fill='white')
     
-    if app.catHealth < 20:
+    if app.catHealth < 20 and app.catInventory < 7:
             canvas.create_text(300, 80, text="Red cats will not interact with you if", 
                                 font='Arial 15', fill='#8ce8ff')
             canvas.create_text(300, 100, text="your health is too low. Green items will heal you.",
                                 font='Arial 15', fill='#8ce8ff')
     
-    canvas.create_text(300, 15, text="Interact with red cats to get enough pieces to go home.", 
+    if app.catInventory < 7:
+        canvas.create_text(300, 15, text="Interact with red cats to get enough pieces to go home.", 
                                 font='Arial 15', fill='#8ce8ff')
     
 
@@ -426,8 +448,6 @@ def gameMode21_redrawAll(app, canvas):
 # but at the end they will have become friends with the red cats
 battleWalls = []
 
-# add ending animation + text to explain you got a blue door
-# piece after fighting
 def fightButFunc(app):
     # app.attacking = True
     app.enemyInBattle.healthLevel -= app.catAttack
@@ -461,14 +481,14 @@ def battleMode_appStarted(app):
     # battleBg = Background('images/battlebg.png', 600, 600, batCat)
 
     app.catHealth = 100
-    app.catInventory = 0 # number of blue pieces you have
+    app.catInventory = 7 # number of blue pieces you have
     # at the end, if cat's level is 3 or more, -> "bad" end
     # cat level is greater than 0 but less than 3 -> neutral end
     # cat level is 0 -> "good" end
 
     # cat's level goes up by 0.5 for every cat killed
     # killing final boss cat raises level by 3
-    app.catLevel = 0
+    app.catLevel = 4
     app.catAttack = 20
     # for each level up, cat's attack goes up by 10
     app.battleNum = 1 #goes up to 7 for the 7th cat you can fight
@@ -530,6 +550,8 @@ def battleMode_keyReleased(app, event):
         app.batCat.keyReleased(app, event)
 
 def battleMode_timerFired(app):
+    # add ending animation + text to explain you got a blue door piece
+    # after choosing to fight to end the battle
     if app.enemyInBattle.healthLevel <= 0:
         app.catInventory += 1
         app.catLevel += 1
@@ -683,6 +705,7 @@ def bossBattleMode_timerFired(app):
         app.mode = 'gameMode2'
         app.bossCat.defeated = True
         app.bossDefending = False
+        app.catLevel += 3
     if not app.bossTalking and not app.bossAttacking and not app.bossDefending:
         app.bossDefaultText.timerFired(app)
     elif app.bossTalking:
@@ -704,7 +727,7 @@ def bossBattleMode_redrawAll(app, canvas):
     elif app.bossTalking:
         app.bossTalkText.redrawAll(app, canvas)
     elif app.bossDefending:
-        app.bossBatCat.redrawAll(app, canvas)
+        app.batCat.redrawAll(app, canvas)
         app.enemyAttack.redrawAll(app, canvas)
     
     #enemy health
