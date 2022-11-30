@@ -155,7 +155,8 @@ class Cat():
             canvas.create_image(x, y, 
             image=ImageTk.PhotoImage(app.catImage))
 
-# INCLUDES PHYSICS PART (cat jumping + collisions during battle)
+# INCLUDES PHYSICS PART (cat jumping during enemy attack)
+# jumping includes very basic version of gravity and acceleration
 class battleCat():
     def __init__(self):
         leftBoundX, upperBoundY, rightBoundX, lowerBoundY = 100, 275, 500, 425

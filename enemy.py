@@ -169,7 +169,7 @@ class Enemy(Object):
         path.append((row,col))
 
         if (row, col) == (targetRow, targetCol):
-            if self.catNearObj():
+            if self.catNearObj() and app.catHealth >= 20:
                 app.mode = 'battleMode'
                 app.enemyInBattle = self
             return path
@@ -203,8 +203,9 @@ class Enemy(Object):
         return (abs(self.currCatX - self.cx) <= 64 and 
                 abs(self.currCatY - self.cy) <= 64)
     
+    #  ENEMY DOES NOT FOLLOW CAT IF CAT HP < 20
     def moveEnemyToNode(self, app, targRow, targCol):
-        if not self.catNearObj():
+        if not self.catNearObj() and app.catHealth >= 20:
             if (targRow > self.currentRow):
                 self.y0 += 5
                 self.y1 += 5

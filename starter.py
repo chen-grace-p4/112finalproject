@@ -284,6 +284,15 @@ def gameMode2_redrawAll(app, canvas):
             canvas.create_text(460, 40, text=f"Pieces Left To Collect: {7 - app.catInventory}",
                                             font='Arial 20',
                                             fill='white')
+        
+        if app.catHealth < 20:
+            canvas.create_text(300, 80, text="Red cats will not interact with you if", 
+                                font='Arial 15', fill='#8ce8ff')
+            canvas.create_text(300, 100, text="your health is too low. Green items will heal you.",
+                                font='Arial 15', fill='#8ce8ff')
+        
+        canvas.create_text(300, 10, text="Interact with red cats to get enough pieces to go home.", 
+                                font='Arial 10', fill='#8ce8ff')
 
 ###########################################
 ###########################################
@@ -392,6 +401,15 @@ def gameMode21_redrawAll(app, canvas):
                                         font='Arial 20',
                                         fill='white')
     
+    if app.catHealth < 20:
+            canvas.create_text(300, 80, text="Red cats will not interact with you if", 
+                                font='Arial 15', fill='#8ce8ff')
+            canvas.create_text(300, 100, text="your health is too low. Green items will heal you.",
+                                font='Arial 15', fill='#8ce8ff')
+    
+    canvas.create_text(300, 15, text="Interact with red cats to get enough pieces to go home.", 
+                                font='Arial 15', fill='#8ce8ff')
+    
 
 ###########################################
 ###########################################
@@ -408,6 +426,8 @@ def gameMode21_redrawAll(app, canvas):
 # but at the end they will have become friends with the red cats
 battleWalls = []
 
+# add ending animation + text to explain you got a blue door
+# piece after fighting
 def fightButFunc(app):
     # app.attacking = True
     app.enemyInBattle.healthLevel -= app.catAttack

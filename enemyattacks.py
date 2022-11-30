@@ -1,8 +1,10 @@
 from cmu_112_graphics import * 
 
-# all attack last for 15 secons 
-
-# after a attack is done, set app. 
+# this file has all moving block attacks enemy inflicts on player
+# during battles. Blocks are considered obstacles and player
+# needs to move to avoid the blocks or they lose health.
+# player can only jump during normalattack3 (which 
+# attack happens is chosen at random)
 class enemyAttack():
     def __init__(self):
         x0, y0, x1, y1 = 100, 275, 500, 425
@@ -148,6 +150,11 @@ class movingGravityBlock():
         elif (catX > x0 and catX < x1 and
             catY1 > y0 and catY1 < boundY):
             app.catHealth -= 5
+        
+        # cat health will not be lower than 1 but you can't progress game
+        # without a health 20 or higher
+        if app.catHealth < 1:
+                app.catHealth = 1
 
     def redrawAll(self, app, canvas):
         x0 = self.cx - self.halfSideLen
@@ -196,9 +203,9 @@ class movingBlock():
         elif self.moveDir == 'rightLeft':
             self.cx -= 5 
         
-        if self.timePassed == 3:
+        if self.timePassed == 2:
             self.checkCollision(app)
-        elif self.timePassed > 3:
+        elif self.timePassed > 2:
             self.timePassed = 0
     
     def checkCollision(self, app):
@@ -232,6 +239,9 @@ class movingBlock():
         elif (catX > x0 and catX < x1 and
             catY1 > y0 and catY1 < boundY):
             app.catHealth -= 5
+        
+        if app.catHealth < 1:
+            app.catHealth = 1
 
     def redrawAll(self, app, canvas):
         x0 = self.cx - self.halfSideLen
