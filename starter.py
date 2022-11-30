@@ -2,6 +2,7 @@ from cmu_112_graphics import *
 from mainCat import *
 from map import *
 from enemy import *
+from enemyattacks import *
 from ui import *
 
 # note: all art (sprites, background, etc.) made by me!
@@ -408,12 +409,33 @@ def gameMode21_redrawAll(app, canvas):
 battleWalls = []
 
 def fightButFunc(app):
-    app.attacking = True
+    # app.attacking = True
+    app.enemyInBattle.healthLevel -= app.catAttack
+    app.defending = True
+    import random
+    attack1 = normalAttack1()
+    attack2 = normalAttack2()
+    attack3 = normalAttack3()
+    enemyAttOptions = [attack1, attack2, attack3]
+    
+    randindex = random.randint(0, 2) # default 0, 2
+    # randindex = 2
+    app.enemyAttack = enemyAttOptions[randindex]
+    app.enemyAttack.attackOn = True
+
+    if randindex == 2:
+        app.batCat.cy = app.batCat.lowerBoundY - 20
+        app.batCat.canMoveVert = False
+    else:
+        app.batCat.cx = 300
+        app.batCat.cy = 350
+        app.batCat.canMoveVert = True
 
 def talkButFunc(app):
     app.talking = True
     app.talkText.startText = True
 
+import random
 def battleMode_appStarted(app):
     app.batCat = battleCat()
     # battleBg = Background('images/battlebg.png', 600, 600, batCat)
@@ -427,7 +449,7 @@ def battleMode_appStarted(app):
     # cat's level goes up by 0.5 for every cat killed
     # killing final boss cat raises level by 3
     app.catLevel = 0
-    app.catAttack = 10
+    app.catAttack = 20
     # for each level up, cat's attack goes up by 10
     app.battleNum = 1 #goes up to 7 for the 7th cat you can fight
     app.battleText = 0 #resets to 0 after every battle
@@ -452,7 +474,15 @@ def battleMode_appStarted(app):
     app.talkBut = Button('images/talkbutton.png', 412, 486, talkButFunc)
     app.talkBut.appStarted(app)
 
-# when not talking, show text depending on enemy hostility level
+    # enemy attacks
+    attack1 = normalAttack1()
+    attack2 = normalAttack2()
+    attack3 = normalAttack3()
+    enemyAttOptions = [attack1, attack2, attack3]
+    
+    randindex = random.randint(0, 2)
+    app.enemyAttack = enemyAttOptions[randindex]
+
 
 def battleMode_keyPressed(app, event):
     if not app.talking and not app.attacking and not app.defending:
@@ -480,15 +510,27 @@ def battleMode_keyReleased(app, event):
         app.batCat.keyReleased(app, event)
 
 def battleMode_timerFired(app):
+    if app.enemyInBattle.healthLevel <= 0:
+        app.catInventory += 1
+        app.catLevel += 1
+        app.catAttack += 10
+        app.enemyInBattle.showing = False
+        # app.battleNum += 1 # add in later when i have more texts
+        app.battleText = 0
+        app.batCat = battleCat() #resets batcat
+        app.batCat.appStarted(app)
+        app.mode = 'gameMode21'
+        app.defending = False
     if not app.talking and not app.attacking and not app.defending:
         app.defaultText.timerFired(app)
     elif app.talking:
         app.talkText.timerFired(app)
     elif app.defending:
         app.batCat.timerFired(app)
+        app.enemyAttack.timerFired(app)
 
 def battleMode_redrawAll(app, canvas):
-    canvas.create_image(300, 300, 
+    canvas.create_image(300, 300,  
             image=ImageTk.PhotoImage(app.battleBg))
     if not app.talking and not app.attacking and not app.defending:
         app.defaultText.redrawAll(app, canvas)
@@ -501,6 +543,7 @@ def battleMode_redrawAll(app, canvas):
         app.talkText.redrawAll(app, canvas)
     elif app.defending:
         app.batCat.redrawAll(app, canvas)
+        app.enemyAttack.redrawAll(app, canvas)
     
     #enemy health
     canvas.create_text(485, 160, text=f"Enemy Health: {app.enemyInBattle.healthLevel}/100", 
@@ -521,14 +564,35 @@ def battleMode_redrawAll(app, canvas):
 battleWalls = []
 
 def bossFightButFunc(app):
-    app.bossAttacking = True
+    # app.bossAttacking = True
+    app.enemyInBattle.healthLevel -= app.catAttack
+    app.bossDefending = True
+    import random
+    attack1 = normalAttack1()
+    attack2 = normalAttack2()
+    attack3 = normalAttack3()
+    enemyAttOptions = [attack1, attack2, attack3]
+    
+    randindex = random.randint(0, 2) # default 0, 2
+    app.enemyAttack = enemyAttOptions[randindex]
+    app.enemyAttack.attackOn = True
+
+    if randindex == 2:
+        app.batCat.cy = app.batCat.lowerBoundY - 20
+        app.batCat.canMoveVert = False
+    else:
+        app.batCat.cx = 300
+        app.batCat.cy = 350
+        app.batCat.canMoveVert = True
 
 def bossTalkButFunc(app):
     app.bossTalking = True
     app.bossTalkText.startText = True
 
+import random
 def bossBattleMode_appStarted(app):
     app.batCat = battleCat()
+    app.batCat.appStarted(app)
     app.bossBattleText = 0 #resets to 0 after every battle
 
     app.bossTalking = False 
@@ -553,7 +617,15 @@ def bossBattleMode_appStarted(app):
     app.bossTalkBut = Button('images/talkbutton.png', 412, 486, bossTalkButFunc)
     app.bossTalkBut.appStarted(app)
 
-# when not talking, show text depending on enemy hostility level
+    # enemy attacks
+    attack1 = normalAttack1()
+    attack2 = normalAttack2()
+    attack3 = normalAttack3()
+    enemyAttOptions = [attack1, attack2, attack3]
+    
+    randindex = random.randint(0, 2)
+    app.enemyAttack = enemyAttOptions[randindex]
+
 
 def bossBattleMode_keyPressed(app, event):
     if not app.bossTalking and not app.bossAttacking and not app.bossDefending:
@@ -577,15 +649,27 @@ def bossBattleMode_keyPressed(app, event):
             app.bossDefaultText.keyPressed(app, event)
     elif app.bossTalking:
         app.bossTalkText.keyPressed(app, event)
+    elif app.bossDefending:
+        app.batCat.keyPressed(app, event)
 
 def bossBattleMode_keyReleased(app, event):
-    pass
+    if app.bossDefending:
+        app.batCat.keyReleased(app, event)
 
 def bossBattleMode_timerFired(app):
+    if app.enemyInBattle.healthLevel <= 0:
+        app.enemyInBattle.showing = False
+        app.bossBattleText = 0
+        app.mode = 'gameMode2'
+        app.bossCat.defeated = True
+        app.bossDefending = False
     if not app.bossTalking and not app.bossAttacking and not app.bossDefending:
         app.bossDefaultText.timerFired(app)
     elif app.bossTalking:
         app.bossTalkText.timerFired(app)
+    elif app.bossDefending:
+        app.batCat.timerFired(app)
+        app.enemyAttack.timerFired(app)
 
 def bossBattleMode_redrawAll(app, canvas):
     canvas.create_image(300, 300, 
@@ -601,6 +685,7 @@ def bossBattleMode_redrawAll(app, canvas):
         app.bossTalkText.redrawAll(app, canvas)
     elif app.bossDefending:
         app.bossBatCat.redrawAll(app, canvas)
+        app.enemyAttack.redrawAll(app, canvas)
     
     #enemy health
     canvas.create_text(485, 160, text=f"Enemy Health: {app.enemyInBattle.healthLevel}/100", 

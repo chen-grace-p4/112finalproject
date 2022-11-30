@@ -155,7 +155,7 @@ class Cat():
             canvas.create_image(x, y, 
             image=ImageTk.PhotoImage(app.catImage))
 
-# add physics here
+# INCLUDES PHYSICS PART (cat jumping + collisions during battle)
 class battleCat():
     def __init__(self):
         leftBoundX, upperBoundY, rightBoundX, lowerBoundY = 100, 275, 500, 425
@@ -165,11 +165,11 @@ class battleCat():
         self.lowerBoundY = lowerBoundY
 
         self.cx = 300
-        # self.cy = 350
-        self.cy = self.lowerBoundY - 20 #default for if cat can jump
+        self.cy = 350
+        # self.cy = self.lowerBoundY - 20 #default for if cat can jump
         self.image = 'images/battlecat.png'
 
-        self.canMoveVert = False
+        self.canMoveVert = True
         # if self.canMoveVert is False, then cat can jump (add in keypressed)
 
         self.timePassed = 0

@@ -1,5 +1,6 @@
 from cmu_112_graphics import *
 from mainCat import *
+from enemyattacks import *
 class Button():
     def __init__(self, image, x, y, func):
         self.cx = x
@@ -90,11 +91,12 @@ class TextBox():
             
             displaytext = "texts/hostiletext.txt" #level is 3 or 4
             if app.enemyInBattle.hostilityLevel == 0:
-                #add a blue piece to inventory
                 app.catInventory += 1
                 app.enemyInBattle.showing = False
                 # app.battleNum += 1 # add in later when i have more texts
                 app.battleText = 0
+                app.batCat = battleCat() #resets batcat
+                app.batCat.appStarted(app)
                 app.mode = 'gameMode21'
             else:
                 app.enemyInBattle.hostilityLevel -= 1
@@ -102,12 +104,32 @@ class TextBox():
                     displaytext = "texts/neutraltext.txt"
                 elif app.enemyInBattle.hostilityLevel <= 1:
                     displaytext = "texts/friendlytext.txt"
+                # set app.enemyAttack to a new randomized attack and activate it
+                app.defending = True
+                import random
+                attack1 = normalAttack1()
+                attack2 = normalAttack2()
+                attack3 = normalAttack3()
+                enemyAttOptions = [attack1, attack2, attack3]
+                
+                randindex = random.randint(0, 2)
+                # randindex = 2
+                app.enemyAttack = enemyAttOptions[randindex]
+                app.enemyAttack.attackOn = True
+
+                if randindex == 2:
+                    app.batCat.cy = app.batCat.lowerBoundY - 20
+                    app.batCat.canMoveVert = False
+                else:
+                    app.batCat.cx = 300
+                    app.batCat.cy = 350
+                    app.batCat.canMoveVert = True
+
             app.defaultText = TextBox(displaytext, 100, 260, 500, 425, True)
             app.defaultText.startText = True
             app.talking = False
 
-            # set app.enemyAttack to a new randomized attack 
-            app.defending = True
+            
         
         elif self.fileName[6:14] == 'bossnotr':
             app.bossText = TextBox('texts/bossnotready.txt', 20, 400, 580, 580, True)
@@ -140,6 +162,26 @@ class TextBox():
                     displaytext = "texts/neutraltext.txt"
                 elif app.enemyInBattle.hostilityLevel <= 1:
                     displaytext = "texts/friendlytext.txt"
+                # set app.enemyAttack to a new randomized attack and activate it
+                app.bossDefending = True
+                import random
+                attack1 = normalAttack1()
+                attack2 = normalAttack2()
+                attack3 = normalAttack3()
+                enemyAttOptions = [attack1, attack2, attack3]
+                
+                randindex = random.randint(0, 2) # default 0, 2
+                app.enemyAttack = enemyAttOptions[randindex]
+                app.enemyAttack.attackOn = True
+                
+                if randindex == 2:
+                    app.batCat.cy = app.batCat.lowerBoundY - 20
+                    app.batCat.canMoveVert = False
+                else:
+                    app.batCat.cx = 300
+                    app.batCat.cy = 350
+                    app.batCat.canMoveVert = True
+
             app.bossDefaultText = TextBox(displaytext, 100, 260, 500, 425, True)
             app.bossDefaultText.startText = True
             app.bossTalking = False
