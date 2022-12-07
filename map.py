@@ -24,7 +24,6 @@ class Background():
         else:
             self.cat.toggleMoveRight = True
 
-        # a little bit off for some reason
         if x0 < 0:
             x0 = 0
             x1 = 600
@@ -89,7 +88,6 @@ class Object():
         bgY1 = y1 
         self.y1 = bgY1 - (bgHeight - 600)
     
-    # @staticmethod
     def checkCollision(self):
         catX = self.cat.cx 
         catY = self.cat.cy 
@@ -104,7 +102,6 @@ class Object():
         touchedBottomEdge = False
         if (catX > self.x0 and catX < self.x1 and
             catY0 > boundY and catY0 < self.y1):
-            # print("touched bottom edge!")
             self.cat.toggleMoveUp = False
             touchedBottomEdge = True 
             self.catTouchingObj = True
@@ -118,7 +115,6 @@ class Object():
         touchedRightEdge = False 
         if (catX0 > boundX and catX0 < self.x1 and
             catY > self.y0 and catY < self.y1):
-            # print("touched right edge!")
             self.cat.toggleMoveLeft = False
             touchedRightEdge = True 
             self.catTouchingObj = True
@@ -132,7 +128,6 @@ class Object():
         touchedLeftEdge = False 
         if (catX1 > self.x0 and catX1 < boundX and
             catY > self.y0 and catY < self.y1):
-            # print("touched left edge!")
             self.cat.toggleMoveRight = False
             touchedLeftEdge = True 
             self.catTouchingObj = True
@@ -146,7 +141,6 @@ class Object():
         touchedTopEdge = False 
         if (catX > self.x0 and catX < self.x1 and
             catY1 > self.y0 and catY1 < boundY):
-            # print("touched top edge!")
             self.cat.toggleMoveDown = False
             touchedTopEdge = True 
             self.catTouchingObj = True
@@ -167,9 +161,7 @@ class Object():
             x1 -= self.cat.scrollX
             y0 -= self.cat.scrollY
             y1 -= self.cat.scrollY
-            # print(x0)
-            # print(y0)
-            # canvas.create_rectangle(x0, y0, x1, y1, fill='red')
+
             self.checkCollision()
 
 # object that you can interact with and does something
@@ -216,17 +208,6 @@ class InteractObj(Object):
             cx -= self.cat.scrollX
             cy -= self.cat.scrollY
             
-            # x0 = self.x0 
-            # x1 = self.x1
-            # y0 = self.y0
-            # y1 = self.y1
-            
-            # x0 -= self.cat.scrollX
-            # x1 -= self.cat.scrollX
-            # y0 -= self.cat.scrollY
-            # y1 -= self.cat.scrollY
-
-            # canvas.create_rectangle(x0, y0, x1, y1, fill='red')
             canvas.create_image(cx, cy,   
                 image=ImageTk.PhotoImage(self.objImage))
             self.checkCollision()

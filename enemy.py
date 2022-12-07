@@ -25,7 +25,6 @@ class GraphCreator():
         # False means can't walk there
         # True means there is a path there
         self.graph2dList = self.defaultGraph(rows, cols)
-        # print(self.graph2dList)
         self.rows = rows
         self.cols = cols
         if mapName == 'redmap21':
@@ -49,11 +48,6 @@ class GraphCreator():
         for path in mapPathList:
             self.pathCreator(path[0], path[1], path[2], path[3])
     
-    # maybe not needed
-    # returns self.graph2dList
-    def getGraph(self):
-        pass
-    
     # returns row and col of something 
     # based on their cx and cy location on entire map
     def getGraphLocation(self, cx, cy):
@@ -61,9 +55,7 @@ class GraphCreator():
         colLoc = cx // 64
         return (rowLoc, colLoc)
 
-# maybe don't inherit from object and do collision by graph
 class Enemy(Object):
-    # give it a spawning point on map
     def __init__(self, image, x0, y0, x1, y1, cat, bgHeight, graph):
         self.healthLevel = 100
         self.hostilityLevel = 4
@@ -221,21 +213,9 @@ class Enemy(Object):
                 self.x0 -= 5
                 self.x1 -= 5
 
-    @staticmethod
-    # contains information for enemy1
-    def enemy1(app):
-        pass
-
-    def keyPressed(self, app, event):
-        if self.showing:
-            if (self.catNearObj() and event.key == 'z'):
-                # activate textbox
-                pass
-
     def timerFired(self, app):
         if self.showing:
             self.timePassed += 1
-            # print(app.timePassed)
             
             if self.timePassed == 5:
                 catLoca = self.cat.getCatLocation()
@@ -251,19 +231,12 @@ class Enemy(Object):
             self.cx = self.x0 + 32
             self.cy = self.bgY0 + 32
 
-            # print(self.cx, self.cy)
-            # catLoca = self.cat.getCatLocation()
-            # catX = catLoca[0]
-            # catY = catLoca[1]
-            # print(catX, catY)
             currentGraphLoca = self.graph.getGraphLocation(self.cx, self.cy)
             self.currentRow = currentGraphLoca[0]
             self.currentCol = currentGraphLoca[1]
 
             if self.prevCatX != self.currCatX or self.prevCatY != self.currCatY:
-                # print("cat moved!")
                 self.path = self.pathToCat(app)
-                # print(self.path)
 
             if len(self.path) > 0:
                 move = self.path[0]
@@ -277,18 +250,7 @@ class Enemy(Object):
             cy = self.y0 + (self.objImage.height/2)
             cx -= self.cat.scrollX
             cy -= self.cat.scrollY
-            
-            # x0 = self.x0 
-            # x1 = self.x1
-            # y0 = self.y0
-            # y1 = self.y1
 
-            # x0 -= self.cat.scrollX
-            # x1 -= self.cat.scrollX
-            # y0 -= self.cat.scrollY
-            # y1 -= self.cat.scrollY
-
-            # canvas.create_rectangle(x0, y0, x1, y1, fill='yellow')
             canvas.create_image(cx, cy,   
                 image=ImageTk.PhotoImage(self.objImage))
             self.checkCollision()
@@ -328,9 +290,6 @@ class BossEnemy(Object):
         return (abs(self.currCatX - self.cx) <= 100 and 
                 abs(self.currCatY - self.cy) <= 100)
 
-    # if user is neutral or hostile, talking to the boss is useless
-    # there will only be friendly responses if user has been friendly
-
     def timerFired(self, app):
         if (self.showing):
             catLoca = self.cat.getCatLocation()
@@ -340,7 +299,6 @@ class BossEnemy(Object):
 
             if self.timePassed == 50:
                 if (not self.defeated and self.catInRange() and not app.textOnScreen2):
-                    # print("cat in range")
                     if (app.catInventory >= 7):
                         bossFile = "texts/bfbossneutral.txt"
                         if (app.catLevel >= 3):
@@ -348,12 +306,10 @@ class BossEnemy(Object):
                         elif (app.catLevel == 0):
                             bossFile = "texts/bfbossfriendly.txt"
                         app.bossText = TextBox(bossFile, 20, 400, 580, 580, True)
-                    # print("hello")
                     app.bossText.startText = True
                     app.textOnScreen2 = True
             elif self.timePassed > 50:
                 self.timePassed = 0
-        # print("cat not in range")
     
     def redrawAll(self, app, canvas):
         if (self.showing):

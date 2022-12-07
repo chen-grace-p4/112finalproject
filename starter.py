@@ -5,19 +5,7 @@ from enemy import *
 from enemyattacks import *
 from ui import *
 
-# make sure attack is random every time
-# remove dead code
-# add a skip button maybe
-# add music maybe?
-
-# note: all art (sprites, background, etc.) made by me!
-
-# make UI/Buttons class for HP and items collected
-
-# make inventory class (ways to add object to inventory)
-# press "C" for inventory
-# objects have description attached to them
-# can interact with objects using "Z"
+# note: all art (sprites, background, etc.) and dialogue writing made by me!
 
 DEBUG = False
 mainCat = Cat(600, 600, 'images/bluemap1.png')
@@ -25,7 +13,6 @@ bg1 = Background('images/bluemap1.png', 600, 600, mainCat)
 
 def appStarted(app):
     app.mode = 'startScreenMode'
-    # app.mode = 'gameMode2'
     app.prevMode = ''
     if DEBUG:
         app.mouseX = 0
@@ -48,7 +35,7 @@ def startButtonFunc(app):
 def howToButtonFunc(app):
     app.mode = 'howToScreenMode'
 
-def startScreenMode_appStarted(app): #startScreenMode
+def startScreenMode_appStarted(app): 
     app.background = app.loadImage('images/startScreen.png')
     
     app.startButton = Button('images/startButton.png', 150, 300,
@@ -101,9 +88,6 @@ def howToScreenMode_appStarted(app):
                         howToButtonFunc2)
     app.howToButton2.appStarted(app)
 
-def howToScreenMode_timerFired(app):
-    # app.howToText.timerFired(app)
-    pass
 def howToScreenMode_mousePressed(app, event):
     app.howToButton2.mousePressed(app, event)
 def howToScreenMode_mouseMoved(app, event):
@@ -126,7 +110,6 @@ def howToScreenMode_redrawAll(app, canvas):
     if DEBUG:
         canvas.create_text(app.mouseX, app.mouseY, 
                             text=f"{app.mouseX}, {app.mouseY}")
-    # app.howToText.redrawAll(app, canvas)
 ###########################################
 bg1Walls = [(0, 0, 330, 440),
             (300, 0, 480, 100),
@@ -143,7 +126,6 @@ def gameMode_appStarted(app):
     bg1.appStarted(app)
     app.scene11Text = TextBox('texts/scene1.1.txt', 20, 400, 580, 580, True)
     app.scene11Text.startText = True
-    # app.scene1Text.appStarted(app) # appstarted doens't do anything yet
     app.scene12Text = TextBox('texts/scene1.2.txt', 20, 400, 580, 580, True)
     app.textOnScreen = True #Default is False, only True when textbox displayed
 
@@ -375,7 +357,6 @@ def gameMode21_appStarted(app):
     for mapEnemy in app.enemyList:
         mapEnemy.appStarted(app)
     
-    # make healing items have a cool down later
     app.healing1 = InteractObj('images/healthitem.png', 130, 770, 192, 832,
                                 mainCat21, bg21.bgImage.height, healthItemFunc)
     app.healing2 = InteractObj('images/healthitem.png', 768, 130, 830, 192,
@@ -456,17 +437,6 @@ def gameMode21_redrawAll(app, canvas):
 
 ###########################################
 ###########################################
-# player can choose to fight to lower health level or talk to 
-# lower hostility level 
-# when either hp or hostility reaches 0, the battle ends and 
-# the player gets a piece of a blue door
-
-# if they fight, they will earn exp and level up themselves
-# it will be easier to fight the boss battle and go home
-# but they will leave thinking they shouldve never came and red sucks
-
-# if they talk, they will earn no exp and have to fight longer,
-# but at the end they will have become friends with the red cats
 battleWalls = []
 
 def fightButFunc(app):
@@ -499,7 +469,6 @@ def talkButFunc(app):
 import random
 def battleMode_appStarted(app):
     app.batCat = battleCat()
-    # battleBg = Background('images/battlebg.png', 600, 600, batCat)
 
     app.catHealth = 100
     app.catInventory = 0 # number of blue pieces you have
@@ -542,27 +511,27 @@ def battleMode_appStarted(app):
     app.enemyAttack = enemyAttOptions[randindex]
 
 def battleMode_keyPressed(app, event):
-    # shortcuts
-    if event.key == 't':
-        if app.catInventory < 7:
-            app.catInventory += 1
-        app.enemyInBattle.showing = False
-        app.battleText = 0
-        app.batCat = battleCat() #resets batcat
-        app.batCat.appStarted(app)
-        app.mode = 'gameMode21'
-    elif event.key == 'f':
-        if app.catInventory < 7:
-            app.catInventory += 1
-        app.catLevel += 1
-        app.catAttack += 10
-        app.enemyInBattle.showing = False
-        app.battleText = 0
-        app.batCat = battleCat() #resets batcat
-        app.batCat.appStarted(app)
-        app.mode = 'gameMode21'
-        app.defending = False
     if not app.talking and not app.attacking and not app.defending:
+        # shortcuts
+        if event.key == 't':
+            if app.catInventory < 7:
+                app.catInventory += 1
+            app.enemyInBattle.showing = False
+            app.battleText = 0
+            app.batCat = battleCat() #resets batcat
+            app.batCat.appStarted(app)
+            app.mode = 'gameMode21'
+        elif event.key == 'f':
+            if app.catInventory < 7:
+                app.catInventory += 1
+            app.catLevel += 1
+            app.catAttack += 10
+            app.enemyInBattle.showing = False
+            app.battleText = 0
+            app.batCat = battleCat() #resets batcat
+            app.batCat.appStarted(app)
+            app.mode = 'gameMode21'
+            app.defending = False
         if event.key == 'Right' or event.key == "Left":
             if app.battleSelectOption == "fight":
                 app.battleSelectOption = "talk"
@@ -587,15 +556,12 @@ def battleMode_keyReleased(app, event):
         app.batCat.keyReleased(app, event)
 
 def battleMode_timerFired(app):
-    # add ending animation + text to explain you got a blue door piece
-    # after choosing to fight to end the battle
     if app.enemyInBattle.healthLevel <= 0:
         if app.catInventory < 7:
             app.catInventory += 1
         app.catLevel += 1
         app.catAttack += 10
         app.enemyInBattle.showing = False
-        # app.battleNum += 1 # add in later when i have more texts
         app.battleText = 0
         app.batCat = battleCat() #resets batcat
         app.batCat.appStarted(app)
@@ -648,7 +614,6 @@ def battleMode_redrawAll(app, canvas):
 battleWalls = []
 
 def bossFightButFunc(app):
-    # app.bossAttacking = True
     app.enemyInBattle.healthLevel -= app.catAttack
     app.bossDefending = True
     import random
@@ -657,7 +622,7 @@ def bossFightButFunc(app):
     attack3 = normalAttack3()
     enemyAttOptions = [attack1, attack2, attack3]
     
-    randindex = random.randint(0, 2) # default 0, 2
+    randindex = random.randint(0, 2)
     app.enemyAttack = enemyAttOptions[randindex]
     app.enemyAttack.attackOn = True
 
@@ -814,8 +779,6 @@ def gameModeEnd_appStarted(app):
     # cat level is greater than 0 but less than 3 -> neutral end
     # cat level is 0 -> "good" end
 
-    #********
-    #fix this since cat's level is always 0 in beginning
     textFile = 'texts/endNeut.txt'
     if app.catLevel == 0:
         textFile = 'texts/endGood.txt'

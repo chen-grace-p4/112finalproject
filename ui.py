@@ -26,8 +26,6 @@ class Button():
             image=ImageTk.PhotoImage(self.buttonImage))
 
 class TextBox():
-    # make screen shift so that char is in middle when text
-    # is on
     def __init__(self, textFile, x0, y0, x1, y1, toggleDelay):
         self.fileName = textFile
         self.textList = []
@@ -48,10 +46,6 @@ class TextBox():
         self.allEnd = False
         self.startText = False #Default is False, DEBUG makes it True
 
-        # when text is showing, make cat unable to move
-        # print("made textbox!")
-        # self.cat = cat
-
     def readFile(self):
         filename = self.fileName
         
@@ -61,15 +55,12 @@ class TextBox():
                     self.textList.append(ch)
 
     def timerFired(self, app):
-        # print(self.timePassed)
         if self.startText and not self.textEnded:
             self.timePassed += 1
             if self.timePassed == 2:
-                # print(self.displayedText)
                 if self.displayedIndex < len(self.textList):
                     if (self.textList[self.displayedIndex] == '\n'):
                         self.textEnded = True
-                        # self.displayedText = []
                     else:
                         self.displayedText += self.textList[self.displayedIndex]
                     self.displayedIndex += 1
@@ -115,7 +106,6 @@ class TextBox():
                 if app.catInventory < 7:
                     app.catInventory += 1
                 app.enemyInBattle.showing = False
-                # app.battleNum += 1 # add in later when i have more texts
                 app.battleText = 0
                 app.batCat = battleCat() #resets batcat
                 app.batCat.appStarted(app)
@@ -202,8 +192,7 @@ class TextBox():
                                     width=4)
             chrX = self.x0 + 15
             chrY = self.y0 + 15
-            # canvas.create_text(chrX, chrY, text=self.displayedText, font='Arial5',
-            #                             fill='white')
+
             for chrInd in range(self.displayStartIndex, len(self.displayedText)):
                 chr = self.displayedText[chrInd]
                 if chrX > (self.x1-10):
@@ -212,8 +201,3 @@ class TextBox():
                 canvas.create_text(chrX, chrY, text=f"{chr}", font='Arial 20',
                                         fill='white')
                 chrX += 15
-        # go through displayedtext and display it
-        # use size calculations and amount of text to determine font size
-        # and when to go to the next line
-        # use a loop
-        # when text is done showing, delete textbox and move cat

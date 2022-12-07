@@ -7,7 +7,6 @@ class Cat():
 
     def __init__(self, width, height, bgImage):
         self.bgImage = bgImage
-        # self.image = 'catsprite.png'
         self.cx = width/2
         self.cy = height/2
         self.screenWidth = width 
@@ -25,7 +24,6 @@ class Cat():
         self.bg = app.loadImage(self.bgImage)
         self.bgX = 300
         self.bgY = self.bg.height - 300
-        # app.catImage = app.loadImage(self.image)
         spritestrip = app.loadImage('images/allcatsprites.png')
         app.stillSprites = []
         for i in range(4):
@@ -60,7 +58,6 @@ class Cat():
         
         app.spriteCounter = 0
         app.timerDelay = 0
-        # app.timePassed = 0
 
         # IS cat moving that direction
         app.catIsMovingRight = False
@@ -88,7 +85,6 @@ class Cat():
         self.makeCatVisible(app)
 
     def keyPressed(self, app, event):
-        # "x" makes cat run?
         if (self.toggleMoveLeft and event.key == "Left"):
             self.moveCat(app, -15, 0)
             app.catImage = app.stillSprites[1]
@@ -116,18 +112,15 @@ class Cat():
 
     def timerFired(self, app):
         self.timePassed += 1
-        # print(app.timePassed)
         if self.timePassed == 25:
             if (self.toggleMoveLeft or self.toggleMoveRight or self.toggleMoveUp
                 or self.toggleMoveDown):
                 app.spriteCounter = (1 + app.spriteCounter) % 2
         elif self.timePassed > 25:
             self.timePassed = 0
-        # pass
 
     def getCatLocation(self):
         return (self.bgX, self.bgY)
-        # return (self.cx, self.cy)
 
     def redrawAll(self, app, canvas):
         x = self.cx
@@ -167,11 +160,9 @@ class battleCat():
 
         self.cx = 300
         self.cy = 350
-        # self.cy = self.lowerBoundY - 20 #default for if cat can jump
         self.image = 'images/battlecat.png'
 
         self.canMoveVert = True
-        # if self.canMoveVert is False, then cat can jump (add in keypressed)
 
         self.timePassed = 0
 
@@ -224,8 +215,6 @@ class battleCat():
             else:
                 self.isFallingDown = False
                 self.accelRate = 10
-            # elif self.timePassed > 20:
-            #     self.timePassed = 0
 
     def appStarted(self, app):
         self.sprite = app.loadImage(self.image)
