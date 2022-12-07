@@ -112,7 +112,8 @@ class TextBox():
             
             displaytext = "texts/hostiletext.txt" #level is 3 or 4
             if app.enemyInBattle.hostilityLevel == 0:
-                app.catInventory += 1
+                if app.catInventory < 7:
+                    app.catInventory += 1
                 app.enemyInBattle.showing = False
                 # app.battleNum += 1 # add in later when i have more texts
                 app.battleText = 0

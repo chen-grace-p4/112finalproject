@@ -5,6 +5,11 @@ from enemy import *
 from enemyattacks import *
 from ui import *
 
+# make sure attack is random every time
+# remove dead code
+# add a skip button maybe
+# add music maybe?
+
 # note: all art (sprites, background, etc.) made by me!
 
 # make UI/Buttons class for HP and items collected
@@ -19,8 +24,8 @@ mainCat = Cat(600, 600, 'images/bluemap1.png')
 bg1 = Background('images/bluemap1.png', 600, 600, mainCat)
 
 def appStarted(app):
-    # app.mode = 'startScreenMode'
-    app.mode = 'gameMode21'
+    app.mode = 'startScreenMode'
+    # app.mode = 'gameMode2'
     app.prevMode = ''
     if DEBUG:
         app.mouseX = 0
@@ -54,6 +59,21 @@ def startScreenMode_appStarted(app): #startScreenMode
                         howToButtonFunc)
     app.howToButton.appStarted(app)
 
+def startScreenMode_keyPressed(app, event):
+    if event.key == 'g':
+        app.catInventory = 7
+        app.catLevel = 0
+        app.mode = 'gameMode2'
+    
+    elif event.key == 'b':
+        app.catInventory = 7
+        app.catLevel = 7
+        app.mode = 'gameMode2'
+    
+    elif event.key == 'n':
+        app.catInventory = 7
+        app.catLevel = 1
+        app.mode = 'gameMode2'
 def startScreenMode_mousePressed(app, event):
     app.startButton.mousePressed(app, event)
     app.howToButton.mousePressed(app, event)
@@ -194,6 +214,7 @@ def door2Func(app):
     app.mode = 'gameMode21'
 
 def blueDoorFunc(app):
+    gameModeEnd_appStarted(app)
     app.mode = 'gameModeEnd'
 
 def gameMode2_appStarted(app):
@@ -274,8 +295,8 @@ def gameMode2_redrawAll(app, canvas):
                                             fill='white')
         
         if app.catInventory == 0:
-            canvas.create_text(300, 10, text="Interact with red cats to get enough pieces to go home.", 
-                                font='Arial 10', fill='#8ce8ff')
+            canvas.create_text(300, 15, text="Interact with red cats to get enough pieces to go home.", 
+                                font='Arial 15', fill='#8ce8ff')
         elif app.catInventory == 7:
             canvas.create_text(460, 40, text='''You found all 7 pieces!''',
                                             font='Arial 20',
@@ -481,14 +502,11 @@ def battleMode_appStarted(app):
     # battleBg = Background('images/battlebg.png', 600, 600, batCat)
 
     app.catHealth = 100
-    app.catInventory = 7 # number of blue pieces you have
-    # at the end, if cat's level is 3 or more, -> "bad" end
-    # cat level is greater than 0 but less than 3 -> neutral end
-    # cat level is 0 -> "good" end
+    app.catInventory = 0 # number of blue pieces you have
 
     # cat's level goes up by 0.5 for every cat killed
     # killing final boss cat raises level by 3
-    app.catLevel = 4
+    app.catLevel = 0
     app.catAttack = 20
     # for each level up, cat's attack goes up by 10
     app.battleNum = 1 #goes up to 7 for the 7th cat you can fight
@@ -523,8 +541,27 @@ def battleMode_appStarted(app):
     randindex = random.randint(0, 2)
     app.enemyAttack = enemyAttOptions[randindex]
 
-
 def battleMode_keyPressed(app, event):
+    # shortcuts
+    if event.key == 't':
+        if app.catInventory < 7:
+            app.catInventory += 1
+        app.enemyInBattle.showing = False
+        app.battleText = 0
+        app.batCat = battleCat() #resets batcat
+        app.batCat.appStarted(app)
+        app.mode = 'gameMode21'
+    elif event.key == 'f':
+        if app.catInventory < 7:
+            app.catInventory += 1
+        app.catLevel += 1
+        app.catAttack += 10
+        app.enemyInBattle.showing = False
+        app.battleText = 0
+        app.batCat = battleCat() #resets batcat
+        app.batCat.appStarted(app)
+        app.mode = 'gameMode21'
+        app.defending = False
     if not app.talking and not app.attacking and not app.defending:
         if event.key == 'Right' or event.key == "Left":
             if app.battleSelectOption == "fight":
@@ -553,7 +590,8 @@ def battleMode_timerFired(app):
     # add ending animation + text to explain you got a blue door piece
     # after choosing to fight to end the battle
     if app.enemyInBattle.healthLevel <= 0:
-        app.catInventory += 1
+        if app.catInventory < 7:
+            app.catInventory += 1
         app.catLevel += 1
         app.catAttack += 10
         app.enemyInBattle.showing = False
@@ -598,6 +636,10 @@ def battleMode_redrawAll(app, canvas):
     canvas.create_text(400, 550, text=f"Your Level: {app.catLevel}",
                                         font='Arial 15',
                                         fill='white')
+    
+    if app.defending and app.catInventory <= 1:
+        canvas.create_text(300, 10, text="Avoid the red blocks!", 
+                                font='Arial 15', fill='#8ce8ff')
 
 ###########################################
 ###########################################
@@ -670,6 +712,18 @@ def bossBattleMode_appStarted(app):
 
 
 def bossBattleMode_keyPressed(app, event):
+    if event.key == 't':
+        app.enemyInBattle.showing = False
+        app.bossBattleText = 0
+        app.mode = 'gameMode2'
+        app.bossCat.defeated = True
+    elif event.key == 'f':
+        app.enemyInBattle.showing = False
+        app.bossBattleText = 0
+        app.mode = 'gameMode2'
+        app.bossCat.defeated = True
+        app.bossDefending = False
+        app.catLevel += 3
     if not app.bossTalking and not app.bossAttacking and not app.bossDefending:
         if event.key == 'Right' or event.key == "Left":
             if app.bossBattleSelectOption == "fight":
@@ -751,51 +805,59 @@ endWalls = [(0, 0, 330, 440),
 mainCatEnd = Cat(600, 600, 'images/bluemap1.png')
 bgEnd = Background('images/bluemap1.png', 600, 600, mainCatEnd)
 
+
 def gameModeEnd_appStarted(app):
     mainCatEnd.appStarted(app)
     bgEnd.appStarted(app)
-    # app.scene11Text = TextBox('texts/scene1.1.txt', 20, 400, 580, 580, True)
-    # app.scene11Text.startText = True
-    # # app.scene1Text.appStarted(app) # appstarted doens't do anything yet
-    # app.scene12Text = TextBox('texts/scene1.2.txt', 20, 400, 580, 580, True)
-    # app.textOnEndScreen = True #Default is False, only True when textbox displayed
+    
+    # at the end, if cat's level is 3 or more, -> "bad" end
+    # cat level is greater than 0 but less than 3 -> neutral end
+    # cat level is 0 -> "good" end
+
+    #********
+    #fix this since cat's level is always 0 in beginning
+    textFile = 'texts/endNeut.txt'
+    if app.catLevel == 0:
+        textFile = 'texts/endGood.txt'
+    elif app.catLevel >= 3:
+        textFile = 'texts/endBad.txt'
+    
+    app.endText = TextBox(textFile, 20, 400, 580, 580, True)
+    app.endText.startText = True
+    app.textOnEndScreen = True #Default is False, only True when textbox displayed
 
     app.endWallObj = []
     createWalls(endWalls, app, mainCatEnd, bgEnd, app.endWallObj)
 
+    app.endImage = app.loadImage('images/endImage.png')
+
 def gameModeEnd_keyPressed(app, event):
-    # if not app.textOnScreen: 
-    mainCatEnd.keyPressed(app, event)
-    # if app.scene11Text.startText:
-    #     app.scene11Text.keyPressed(app, event)
-    # if app.scene12Text.startText:
-    #     app.scene12Text.keyPressed(app, event)
+    if not app.textOnEndScreen: 
+        mainCatEnd.keyPressed(app, event)
+    if app.endText.startText:
+        app.endText.keyPressed(app, event)
 
 def gameModeEnd_keyReleased(app, event):
-    # if not app.textOnScreen: 
-    mainCatEnd.keyReleased(app, event)
+    if not app.textOnEndScreen: 
+        mainCatEnd.keyReleased(app, event)
 
 def gameModeEnd_timerFired(app):
     mainCatEnd.timerFired(app)
-    # if app.scene11Text.startText:
-    #     app.scene11Text.timerFired(app)
-    # if app.scene12Text.startText:
-    #     app.scene12Text.timerFired(app)
+    if app.endText.startText:
+        app.endText.timerFired(app)
 
 def gameModeEnd_redrawAll(app, canvas):
     bgEnd.redrawAll(app, canvas)
     mainCatEnd.redrawAll(app, canvas)
-    app.testDoor.redrawAll(app, canvas)
-    # if app.scene11Text.startText:
-    #     app.scene11Text.redrawAll(app, canvas)
-    # if app.scene12Text.startText:
-    #     app.scene12Text.redrawAll(app, canvas)
+    if app.endText.startText:
+        app.endText.redrawAll(app, canvas)
+
     for wall in app.endWallObj:
-        wall.redrawAll(app, canvas)
-    
-    canvas.create_text(100, 40, text=f"Your Health: {app.catHealth}/100",
-                                        font='Arial 17',
-                                        fill='white')
+        wall.redrawAll(app, canvas) 
+
+    if app.endText.allEnd:
+        canvas.create_image(300, 300, 
+            image=ImageTk.PhotoImage(app.endImage))
 
 def main():
     print("Running game!")

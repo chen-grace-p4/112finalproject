@@ -165,8 +165,8 @@ class movingGravityBlock():
         x1 = self.cx + self.halfSideLen
         y1 = self.lowerBoundY
         if self.cx > self.leftBoundX:
-            canvas.create_rectangle(x0, y0, x1, y1, fill='white',
-                                    outline='white')
+            canvas.create_rectangle(x0, y0, x1, y1, fill='red',
+                                    outline='red')
 
 # floats in air
 class movingBlock():
@@ -253,9 +253,9 @@ class movingBlock():
         y1 = self.cy + self.halfSideLen
         if self.moveDir == 'topDown':
             if self.cy < self.lowerBoundY:
-                canvas.create_rectangle(x0, y0, x1, y1, fill='white',
-                                        outline='white')
+                canvas.create_rectangle(x0, y0, x1, y1, fill='red',
+                                        outline='red')
         elif self.moveDir == 'rightLeft':
             if self.cx > self.leftBoundX:
-                canvas.create_rectangle(x0, y0, x1, y1, fill='white',
-                                        outline='white')
+                canvas.create_rectangle(x0, y0, x1, y1, fill='red',
+                                        outline='red')
